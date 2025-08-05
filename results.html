@@ -4,50 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Final Questions & Results</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; }
-        .container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .data-summary { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
-        .question-block { margin-bottom: 25px; padding: 20px; border-left: 4px solid #007bff; background-color: #f8f9fa; border-radius: 8px; }
-        .question-title { font-weight: 600; margin-bottom: 15px; }
-        select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #dee2e6; border-radius: 6px; }
-        .submit-btn { background: #28a745; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; }
-        .completion-message { text-align: center; display: none; }
-    </style>
-</head>
+    </head>
 <body>
     <div class="container">
         <div id="form-container">
-            <h1>Final Questions & Summary</h1>
-            <div class="data-summary">
-                <h3>📊 Data Collection Summary</h3>
-                <p>Gaze points recorded (Task 1): <strong id="gaze-count-1">0</strong></p>
-                <p>Gaze points recorded (Task 2): <strong id="gaze-count-2">0</strong></p>
             </div>
-            <form id="finalForm" onsubmit="handleFinalSubmit(event)">
-                <div class="question-block">
-                    <label class="question-title">Overall, which type of abstract do you find more persuasive?</label>
-                    <select name="general_persuasive" required>
-                        <option value="">Select...</option>
-                        <option value="More_causal">Abstracts with more explicit causal language</option>
-                        <option value="Less_causal">Abstracts with less explicit causal language</option>
-                        <option value="No_preference">No clear preference</option>
-                    </select>
-                </div>
-                <button type="submit" class="submit-btn">Submit Complete Survey</button>
-            </form>
-        </div>
         <div id="completion-message" class="completion-message">
             <h2>✅ Survey Completed Successfully!</h2>
-            <p>Thank you for your participation. Your data has been recorded. You may now close this window.</p>
+            <p>Thank you for your participation. Your data has been recorded.</p>
+            <p>You will now be redirected back to Prolific to confirm your submission.</p>
         </div>
     </div>
     <script>
         function loadSummary() {
-            const gazeData1 = JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]');
-            const gazeData2 = JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]');
-            document.getElementById('gaze-count-1').textContent = gazeData1.length;
-            document.getElementById('gaze-count-2').textContent = gazeData2.length;
+            // Esta función permanece igual
         }
 
         function handleFinalSubmit(event) {
@@ -65,10 +35,20 @@
             };
             
             console.log("Complete Survey Data:", JSON.stringify(completeData, null, 2));
-            // En un estudio real, envía 'completeData' a tu servidor aquí.
-
+            
+            // Muestra el mensaje de finalización
             document.getElementById('form-container').style.display = 'none';
             document.getElementById('completion-message').style.display = 'block';
+
+            // --- CÓDIGO AÑADIDO PARA PROLIFIC ---
+            // IMPORTANTE: Reemplaza esta URL con la que Prolific te dará en el Paso 3
+            const prolificCompletionURL = "https://app.prolific.com/submissions/complete?cc=YOUR_CODE_HERE"; 
+            
+            // Redirige al usuario después de 3 segundos
+            setTimeout(() => {
+                window.location.href = prolificCompletionURL;
+            }, 3000);
+            // --- FIN DEL CÓDIGO AÑADIDO ---
         }
 
         window.onload = loadSummary;
