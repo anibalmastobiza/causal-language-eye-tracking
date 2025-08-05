@@ -6,95 +6,93 @@
     <title>Eye Tracking Calibration</title>
     <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; background-color: #f8f9fa; color: #333; }
-        .calibration-container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
-        .header h1 { color: #2c3e50; margin-bottom: 20px; }
-        .instructions { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 20px; margin-bottom: 30px; text-align: left; }
-        .calibration-point { width: 20px; height: 20px; border-radius: 50%; background-color: #dc3545; position: absolute; cursor: pointer; }
-        .calibration-grid { position: relative; width: 100%; height: 400px; border: 2px solid #dee2e6; border-radius: 8px; margin: 30px 0; }
-        .status-bar { background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; text-align: center; }
+        .container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .instructions { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 10px 20px; margin-bottom: 30px; text-align: left; }
+        #calibration-feedback { position: relative; width: 100%; height: 400px; border: 2px solid #dee2e6; border-radius: 8px; margin: 30px 0; }
+        .calibration-dot { width: 20px; height: 20px; border-radius: 50%; background-color: #dc3545; position: absolute; cursor: pointer; }
         .btn { background: #007bff; color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px; }
         .btn:disabled { background: #6c757d; }
-        .btn-success { background: #28a745; }
-        .hidden { display: none; }
-        #webgazerVideoFeed { position: fixed; top: 20px; right: 20px; width: 200px; height: 150px; border: 2px solid #007bff; z-index: 1000; }
+        #webgazerVideoFeed { position: fixed; top: 10px; right: 10px; border: 2px solid #007bff; z-index: 1000; }
     </style>
 </head>
 <body>
-    <div class="calibration-container">
-        <div class="header"><h1>🔍 Eye Tracking Calibration</h1></div>
+    <div class="container">
+        <h1>🔍 Eye Tracking Calibration</h1>
         <div class="instructions">
-            <h3>Instructions:</h3>
+            <p><strong>Please follow these steps carefully:</strong></p>
             <ol>
-                <li><strong>Allow camera access</strong> when prompted. This is essential for the study.</li>
-                <li>Look at your face in the video feed. Position yourself so your eyes are clearly visible.</li>
-                <li>Click on each of the 9 red dots as they appear. Keep your head still.</li>
+                <li>Click 'Allow' when your browser asks for camera permission.</li>
+                <li>A video of your face will appear. Make sure your eyes are clearly visible.</li>
+                <li>Click the red dot each time it appears. You need to do this 9 times. Keep your head still.</li>
             </ol>
         </div>
-        <div class="status-bar"><div id="statusMessage">Click "Start Calibration" to begin.</div></div>
-        <div id="calibrationArea" class="calibration-grid hidden"></div>
-        <div id="controls">
-            <button id="startBtn" class="btn" onclick="startCalibration()">Start Calibration</button>
-            <button id="continueBtn" class="btn btn-success hidden" onclick="continueToAbstracts()">Continue to Survey</button>
-        </div>
+        <p id="status-message">Click the button below to start.</p>
+        <button id="start-btn" class="btn" onclick="startCalibration()">Start Calibration</button>
+        <div id="calibration-feedback" style="display: none;"></div>
     </div>
 
     <script>
-        let clickCount = 0;
-        const requiredClicks = 9;
+        let clickCounter = 0;
+        const totalClicks = 9;
 
         async function startCalibration() {
-            document.getElementById('startBtn').disabled = true;
-            updateStatus("Requesting camera access... Please click 'Allow'.");
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = true;
+            updateStatus('Requesting camera access...');
             
             try {
-                // We use a fresh start here to get permissions
                 await webgazer.setRegression('ridge').setTracker('clmtrackr').begin();
                 webgazer.showVideoPreview(true).showPredictionPoints(false);
-                document.getElementById('startBtn').classList.add('hidden');
-                document.getElementById('calibrationArea').classList.remove('hidden');
-                updateStatus(`Click ${requiredClicks} times on the dot while looking at it.`);
-                spawnCalibrationDot();
-            } catch (err) {
-                console.error("WebGazer initialization failed:", err);
-                updateStatus("Error: Could not access camera. Please grant permission and use a secure (https) connection.");
-                document.getElementById('startBtn').disabled = false;
+                document.getElementById('calibration-feedback').style.display = 'block';
+                startBtn.style.display = 'none';
+                spawnDot();
+            } catch (e) {
+                console.error(e);
+                updateStatus('Camera access denied. Please enable camera permissions and refresh the page.');
             }
         }
 
-        function spawnCalibrationDot() {
-            const area = document.getElementById('calibrationArea');
-            area.innerHTML = '';
-            const point = document.createElement('div');
-            point.className = 'calibration-point';
-            point.style.left = `${Math.random() * 95}%`;
-            point.style.top = `${Math.random() * 95}%`;
-            point.onclick = () => {
-                clickCount++;
-                webgazer.recordScreenPosition(point.offsetLeft + 10, point.offsetTop + 10, 'click');
-                updateStatus(`Keep clicking the dot. Clicks: ${clickCount}/${requiredClicks}`);
-                if (clickCount >= requiredClicks) {
-                    completeCalibration();
+        function spawnDot() {
+            updateStatus(`Click the red dot. (${clickCounter}/${totalClicks})`);
+            const feedbackBox = document.getElementById('calibration-feedback');
+            feedbackBox.innerHTML = '';
+            const dot = document.createElement('div');
+            dot.className = 'calibration-dot';
+            dot.style.left = `${Math.random() * 95}%`;
+            dot.style.top = `${Math.random() * 95}%`;
+            
+            dot.onclick = () => {
+                webgazer.recordScreenPosition(dot.offsetLeft + 10, dot.offsetTop + 10, 'click');
+                clickCounter++;
+                if (clickCounter >= totalClicks) {
+                    finishCalibration();
                 } else {
-                    spawnCalibrationDot();
+                    spawnDot();
                 }
             };
-            area.appendChild(point);
+            feedbackBox.appendChild(dot);
         }
 
-        function completeCalibration() {
-            document.getElementById('calibrationArea').classList.add('hidden');
-            document.getElementById('continueBtn').classList.remove('hidden');
-            updateStatus("Calibration complete! You can now continue.");
-            sessionStorage.setItem('eyeTrackingCalibrated', 'true');
+        function finishCalibration() {
+            updateStatus('Calibration Complete!');
+            const feedbackBox = document.getElementById('calibration-feedback');
+            feedbackBox.innerHTML = '<p>Great! You are ready to begin the experiment.</p>';
+            
+            const continueBtn = document.createElement('button');
+            continueBtn.className = 'btn';
+            continueBtn.innerText = 'Start Experiment';
+            continueBtn.onclick = () => {
+                // IMPORTANT: We pause WebGazer before navigating away.
+                webgazer.pause();
+                window.location.href = 'experiment.html';
+            };
+            feedbackBox.appendChild(continueBtn);
         }
 
-        function continueToAbstracts() {
-            // We just navigate. The next page will restart webgazer.
-            window.location.href = 'abstract1.html';
+        function updateStatus(msg) {
+            document.getElementById('status-message').innerText = msg;
         }
-        
-        function updateStatus(message) { document.getElementById('statusMessage').textContent = message; }
     </script>
 </body>
 </html>
