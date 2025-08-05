@@ -10,19 +10,14 @@
         .calibration-container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
         .header h1 { color: #2c3e50; margin-bottom: 20px; }
         .instructions { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 20px; margin-bottom: 30px; text-align: left; }
-        .calibration-point { width: 20px; height: 20px; border-radius: 50%; background-color: #007bff; position: absolute; cursor: pointer; transition: all 0.3s ease; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-        .calibration-point.active { background-color: #dc3545; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .calibration-point { width: 20px; height: 20px; border-radius: 50%; background-color: #dc3545; position: absolute; cursor: pointer; }
         .calibration-grid { position: relative; width: 100%; height: 400px; border: 2px solid #dee2e6; border-radius: 8px; margin: 30px 0; }
         .status-bar { background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; }
-        .progress-bar { width: 100%; height: 10px; background-color: #e9ecef; border-radius: 5px; overflow: hidden; margin: 10px 0; }
-        .progress-fill { height: 100%; background-color: #007bff; width: 0%; transition: width 0.3s ease; }
-        .btn { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin: 10px; transition: transform 0.2s, box-shadow 0.2s; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,123,255,0.3); }
-        .btn:disabled { background: #6c757d; cursor: not-allowed; }
-        .btn-success { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .btn { background: #007bff; color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px; }
+        .btn:disabled { background: #6c757d; }
+        .btn-success { background: #28a745; }
         .hidden { display: none; }
-        #webgazerVideoFeed { position: fixed; top: 20px; right: 20px; width: 200px; height: 150px; border: 2px solid #007bff; border-radius: 8px; z-index: 1000; }
+        #webgazerVideoFeed { position: fixed; top: 20px; right: 20px; width: 200px; height: 150px; border: 2px solid #007bff; z-index: 1000; }
     </style>
 </head>
 <body>
@@ -31,135 +26,77 @@
         <div class="instructions">
             <h3>Instructions:</h3>
             <ol>
-                <li><strong>Allow camera access</strong> when prompted by your browser. This is essential for the study.</li>
-                <li><strong>Position yourself</strong> so your face is clearly visible in the video feed.</li>
-                <li><strong>Look directly at each red dot</strong> and click on it. Do this 9 times.</li>
-                <li><strong>Keep your head as still as possible</strong> during calibration.</li>
+                <li><strong>Allow camera access</strong> when prompted. This is essential for the study.</li>
+                <li>Look at your face in the video feed. Position yourself so your eyes are clearly visible.</li>
+                <li>Click on each of the 9 red dots as they appear. Keep your head still.</li>
             </ol>
         </div>
-        <div class="status-bar">
-            <div id="statusMessage">Click "Start Calibration" to begin.</div>
-            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-            <div id="pointCounter">Points completed: 0/9</div>
-        </div>
+        <div class="status-bar"><div id="statusMessage">Click "Start Calibration" to begin.</div></div>
         <div id="calibrationArea" class="calibration-grid hidden"></div>
         <div id="controls">
             <button id="startBtn" class="btn" onclick="startCalibration()">Start Calibration</button>
-            <button id="restartBtn" class="btn hidden" onclick="restartCalibration()">Restart Calibration</button>
             <button id="continueBtn" class="btn btn-success hidden" onclick="continueToAbstracts()">Continue to Survey</button>
         </div>
     </div>
 
     <script>
-        let currentPoint = 0;
-        const calibrationPositions = [
-            {x: 10, y: 10}, {x: 50, y: 10}, {x: 90, y: 10},
-            {x: 10, y: 50}, {x: 50, y: 50}, {x: 90, y: 50},
-            {x: 10, y: 90}, {x: 50, y: 90}, {x: 90, y: 90}
-        ];
+        let clickCount = 0;
+        const requiredClicks = 9;
 
         async function startCalibration() {
             document.getElementById('startBtn').disabled = true;
             updateStatus("Requesting camera access... Please click 'Allow'.");
+            
             try {
                 await webgazer.setRegression('ridge').setTracker('clmtrackr').begin();
                 webgazer.showVideoPreview(true).showPredictionPoints(false);
-                updateStatus("WebGazer initialized. Starting calibration...");
                 document.getElementById('startBtn').classList.add('hidden');
-                document.getElementById('restartBtn').classList.remove('hidden');
-                beginCalibration();
+                document.getElementById('calibrationArea').classList.remove('hidden');
+                updateStatus(`Click ${requiredClicks} times on the dot while looking at it.`);
+                spawnCalibrationDot();
             } catch (err) {
-                console.error("Error initializing WebGazer:", err);
-                let message = "Could not initialize eye tracker. ";
-                if (String(err).includes('Permission')) message += "Please grant camera permissions and try again.";
-                else if (String(err).includes('not found')) message += "No camera found. Please ensure a camera is connected.";
-                else message += "Please check browser permissions and use a secure (https) connection.";
-                updateStatus(message);
+                console.error("WebGazer initialization failed:", err);
+                updateStatus("Error: Could not access camera. Please grant permission and use a secure (https) connection.");
                 document.getElementById('startBtn').disabled = false;
             }
         }
 
-        function beginCalibration() {
-            currentPoint = 0;
-            document.getElementById('calibrationArea').classList.remove('hidden');
-            document.getElementById('continueBtn').classList.add('hidden');
-            webgazer.clearData();
-            showNextCalibrationPoint();
-        }
-
-        function showNextCalibrationPoint() {
-            if (currentPoint >= calibrationPositions.length) {
-                completeCalibration();
-                return;
-            }
+        function spawnCalibrationDot() {
             const area = document.getElementById('calibrationArea');
             area.innerHTML = '';
             const point = document.createElement('div');
-            point.className = 'calibration-point active';
-            point.style.left = `${calibrationPositions[currentPoint].x}%`;
-            point.style.top = `${calibrationPositions[currentPoint].y}%`;
-            point.onclick = () => collectCalibrationData(point);
-            area.appendChild(point);
-            updateStatus(`Click on the red dot (${currentPoint + 1}/${calibrationPositions.length})`);
-            updateProgress();
-        }
-
-        function collectCalibrationData(pointElement) {
-            pointElement.onclick = null; // Disable further clicks
-            let samples = 0;
-            const maxSamples = 15; // Increased samples for better accuracy
-            const collectSample = () => {
-                webgazer.recordScreenPosition(
-                    pointElement.offsetLeft + pointElement.offsetWidth / 2,
-                    pointElement.offsetTop + pointElement.offsetHeight / 2,
-                    'click'
-                );
-                samples++;
-                if (samples < maxSamples) setTimeout(collectSample, 33);
-                else {
-                    currentPoint++;
-                    setTimeout(showNextCalibrationPoint, 300);
+            point.className = 'calibration-point';
+            point.style.left = `${Math.random() * 95}%`;
+            point.style.top = `${Math.random() * 95}%`;
+            point.onclick = () => {
+                clickCount++;
+                webgazer.recordScreenPosition(point.offsetLeft + 10, point.offsetTop + 10, 'click');
+                updateStatus(`Keep clicking the dot. Clicks: ${clickCount}/${requiredClicks}`);
+                if (clickCount >= requiredClicks) {
+                    completeCalibration();
+                } else {
+                    spawnCalibrationDot();
                 }
             };
-            collectSample();
+            area.appendChild(point);
         }
 
         function completeCalibration() {
             document.getElementById('calibrationArea').classList.add('hidden');
-            document.getElementById('restartBtn').classList.remove('hidden');
             document.getElementById('continueBtn').classList.remove('hidden');
             updateStatus("Calibration complete! You can now continue.");
-            updateProgress();
             sessionStorage.setItem('eyeTrackingCalibrated', 'true');
-        }
-
-        function restartCalibration() {
-            document.getElementById('restartBtn').classList.add('hidden');
-            document.getElementById('continueBtn').classList.add('hidden');
-            beginCalibration();
         }
 
         function continueToAbstracts() {
             window.location.href = 'abstract1.html';
         }
-
-        function updateStatus(message) { document.getElementById('statusMessage').textContent = message; }
-        function updateProgress() {
-            const progress = (currentPoint / calibrationPositions.length) * 100;
-            document.getElementById('progressFill').style.width = `${progress}%`;
-            document.getElementById('pointCounter').textContent = `Points completed: ${currentPoint}/${calibrationPositions.length}`;
-        }
         
-        window.addEventListener('load', () => {
-            if (!/https:|localhost|127.0.0.1/.test(window.location.protocol)) {
-                updateStatus("ERROR: This page must be run on a secure web server (https).");
-                document.getElementById('startBtn').disabled = true;
-            }
-        });
+        function updateStatus(message) { document.getElementById('statusMessage').textContent = message; }
 
         window.addEventListener('beforeunload', () => {
             if (webgazer.isReady()) {
-                webgazer.pause(); // PAUSE, DON'T END!
+                webgazer.pause(); // Crucial: Pause, don't end the session
             }
         });
     </script>
