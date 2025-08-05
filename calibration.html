@@ -5,7 +5,6 @@
       <meta name="viewport" content="width=device-width, 
   initial-scale=1.0">
       <title>Eye Tracking Calibration</title>
-      <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
       <style>
           body {
               font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -188,41 +187,61 @@
               {x: 90, y: 90}    // bottom-right
           ];
 
-          function initWebGazer() {
-              webgazer.setRegression('ridge')
-                  .setTracker('clmtrackr')
-                  .setGazeListener(function(data, elapsedTime) {
-                      if (data == null) return;
-                  })
-                  .begin()
-                  .then(() => {
-                      webgazerReady = true;
-                      updateStatus("WebGazer initialized. Ready for 
-  calibration.");
-                  })
-                  .catch((err) => {
-                      updateStatus("Error initializing WebGazer: " + err);
-                  });
+          function loadWebGazer(onLoad) {
+              const script = document.createElement('script');
+              script.src = 'https://webgazer.cs.brown.edu/webgazer.js';
+              script.async = true;
+              script.onload = onLoad;
+              script.onerror = () =>
+                  updateStatus('Failed to load WebGazer. Check your internet connection.');
+              document.head.appendChild(script);
           }
 
-          function startCalibration() {
-              if (!webgazerReady) {
-                  updateStatus("Please wait for WebGazer to 
-  initialize...");
-                  return;
-              }
+            function initWebGazer() {
+                webgazer
+                    .setRegression('ridge')
+                    .setTracker('clmtrackr')
+                    .setGazeListener(function(data, elapsedTime) {
+                        if (data == null) return;
+                    })
+                    .saveDataAcrossSessions(true);
 
-              isCalibrating = true;
-              currentPoint = 0;
-              calibrationPoints = [];
+                webgazer.setOnLoad(() => {
+                    webgazerReady = true;
+                    updateStatus("WebGazer initialized. Starting calibration...");
+                    beginCalibration();
+                });
 
-              document.getElementById('startBtn').classList.add('hidden');
+                webgazer.begin();
+            }
 
-  document.getElementById('calibrationArea').classList.remove('hidden');
+            function startCalibration() {
+                if (typeof webgazer === 'undefined') {
+                    updateStatus('Loading WebGazer...');
+                    loadWebGazer(initWebGazer);
+                    return;
+                }
 
-              webgazer.clearData();
-              showNextCalibrationPoint();
-          }
+                if (!webgazerReady) {
+                    updateStatus('Requesting camera access...');
+                    initWebGazer();
+                    return;
+                }
+
+                beginCalibration();
+            }
+
+            function beginCalibration() {
+                isCalibrating = true;
+                currentPoint = 0;
+                calibrationPoints = [];
+
+                document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('calibrationArea').classList.remove('hidden');
+
+                webgazer.clearData();
+                showNextCalibrationPoint();
+            }
 
           function showNextCalibrationPoint() {
               if (currentPoint >= calibrationPositions.length) {
@@ -318,11 +337,10 @@
    completed: ${currentPoint}/${calibrationPositions.length}`;
           }
 
-          // Initialize WebGazer when page loads
-          window.addEventListener('load', () => {
-              updateStatus("Initializing eye tracking system...");
-              initWebGazer();
-          });
+        // Display initial instructions on page load
+        window.addEventListener('load', () => {
+            updateStatus("Click \"Start Calibration\" to begin");
+        });
 
           window.addEventListener('beforeunload', () => {
               if (webgazer) {
