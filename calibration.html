@@ -48,6 +48,7 @@
             updateStatus("Requesting camera access... Please click 'Allow'.");
             
             try {
+                // We use a fresh start here to get permissions
                 await webgazer.setRegression('ridge').setTracker('clmtrackr').begin();
                 webgazer.showVideoPreview(true).showPredictionPoints(false);
                 document.getElementById('startBtn').classList.add('hidden');
@@ -89,16 +90,11 @@
         }
 
         function continueToAbstracts() {
+            // We just navigate. The next page will restart webgazer.
             window.location.href = 'abstract1.html';
         }
         
         function updateStatus(message) { document.getElementById('statusMessage').textContent = message; }
-
-        window.addEventListener('beforeunload', () => {
-            if (webgazer.isReady()) {
-                webgazer.pause(); // Crucial: Pause, don't end the session
-            }
-        });
     </script>
 </body>
 </html>
