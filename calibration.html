@@ -1,4 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eye Tracking Calibration</title>
+    <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; text-align: center; }
+        .container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .instructions { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 10px 20px; margin-bottom: 30px; text-align: left; }
+        #calibration-grid { position: relative; width: 100%; height: 400px; border: 2px solid #dee2e6; border-radius: 8px; margin: 30px 0; }
+        .calibration-dot { width: 25px; height: 25px; border-radius: 50%; background-color: #dc3545; position: absolute; cursor: pointer; border: 3px solid white; box-shadow: 0 0 5px black; }
+        .btn { background: #007bff; color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px; }
+        .btn:disabled { background: #6c757d; }
+        #webgazerVideoFeed { position: fixed; top: 10px; right: 10px; border: 2px solid #007bff; z-index: 1000; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Step 1: Eye Tracking Calibration</h1>
+        <div class="instructions">
+            <p><strong>Please follow these steps carefully:</strong></p>
+            <ol>
+                <li>Click 'Allow' when your browser asks for camera permission.</li>
+                <li>A video of your face will appear. Make sure your eyes are clearly visible.</li>
+                <li>Without moving your head, click the red dot each time it appears (9 times).</li>
+            </ol>
+        </div>
+        <p id="status-message">Click the button below to start.</p>
+        <button id="start-btn" class="btn" onclick="startCalibration()">Start Calibration</button>
+        <div id="calibration-grid" style="display: none;"></div>
+    </div>
 
+    <script>
+        let clickCounter = 0;
+        const totalClicks = 9;
+
+        async function startCalibration() {
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = true;
+            updateStatus('Requesting camera access...');
+            
+            try {
+                await webgazer.setRegression('ridge').setTracker('clmtrackr').begin();
+                webgazer.showVideoPreview(true).showPredictionPoints(false);
+                document.getElementById('calibration-grid').style.display = 'block';
+                startBtn.style.display = 'none';
+                spawnDot();
+            } catch (e) {
+                console.error(e);
+                updateStatus('Camera access denied. Please enable camera permissions and refresh the page.');
+            }
+        }
+
+        function spawnDot() {
+            updateStatus(`Without moving your head, click the red dot. (${clickCounter}/${totalClicks})`);
+            const grid = document.getElementById('calibration-grid');
+            grid.innerHTML = '';
+            const dot = document.createElement('div');
+            dot.className = 'calibration-dot';
+            dot.style.left = `${Math.random() * 95}%`;
+            dot.style.top = `${Math.random() * 95}%`;
+            
+            dot.onclick = () => {
+                clickCounter++;
+                if (clickCounter >= totalClicks) {
+                    finishCalibration();
+                } else {
+                    spawnDot();
+                }
+            };
+            grid.appendChild(dot);
+        }
+
+        function finishCalibration() {
+            updateStatus('Calibration Complete!');
+            const grid = document.getElementById('calibration-grid');
+            grid.innerHTML = '<p>Great! You are ready to begin the experiment.</p>';
+            
+            const continueBtn = document.createElement('button');
+            continueBtn.className = 'btn';
+            continueBtn.innerText = 'Start Reading Task';
+            continueBtn.onclick = () => {
+                if (webgazer.isReady()) {
+                    webgazer.end(); // Cleanly end the session
+                }
+                window.location.href = 'abstract1.html';
+            };
+            grid.appendChild(continueBtn);
+        }
+
+        function updateStatus(msg) {
+            document.getElementById('status-message').innerText = msg;
+        }
+    </script>
+</body>
+</html>
 
 
 
