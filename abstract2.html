@@ -46,16 +46,25 @@
                 return;
             }
 
-            webgazer.setGazeListener((data, elapsedTime) => {
-                if (data == null) return;
-                gazeData.push({ x: data.x, y: data.y, t: elapsedTime, page: 'abstract2' });
-            }).showVideoPreview(true);
+            try {
+                // Force a restart of webgazer on this page
+                await webgazer.setRegression('ridge').setTracker('clmtrackr').begin();
+                webgazer.showVideoPreview(true).showPredictionPoints(false);
+                
+                // Set the listener AFTER it has started
+                webgazer.setGazeListener((data, elapsedTime) => {
+                    if (data == null) return;
+                    gazeData.push({ x: data.x, y: data.y, t: elapsedTime, page: 'abstract2' });
+                });
 
-            await webgazer.resume();
-            console.log('WebGazer Resumed for Abstract 2');
-
-            startTime = Date.now();
-            readingTimeInterval = setInterval(updateReadingTimer, 1000);
+                console.log('WebGazer RESTARTED for Abstract 2');
+                
+                startTime = Date.now();
+                readingTimeInterval = setInterval(updateReadingTimer, 1000);
+            } catch (err) {
+                console.error("Failed to restart WebGazer:", err);
+                alert("There was an error activating the eye tracker. Please ensure camera permissions are still granted.");
+            }
         }
 
         function updateReadingTimer() {
@@ -73,16 +82,14 @@
             };
             sessionStorage.setItem('abstract2Data', JSON.stringify(data));
             sessionStorage.setItem('abstract2GazeData', JSON.stringify(gazeData));
+            // End the current session before navigating
+            if (webgazer.isReady()) {
+                webgazer.end();
+            }
             window.location.href = 'results.html';
         }
 
         window.addEventListener('load', startEyeTracking);
-        window.addEventListener('beforeunload', () => {
-            if (readingTimeInterval) clearInterval(readingTimeInterval);
-            if (webgazer.isReady()) {
-                webgazer.end(); // END the session completely on the last tracking page
-            }
-        });
     </script>
 </body>
 </html>
