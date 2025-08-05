@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, 
+  initial-scale=1.0">
+      <title>Abstract Evaluation - Pair 2</title>
+      <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+      <style>
+          body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              max-width: 900px;
+              margin: 0 auto;
+              padding: 20px;
+              line-height: 1.6;
+              background-color: #f8f9fa;
+              color: #333;
+          }
+          .survey-container {
+              background-color: white;
+              padding: 40px;
+              border-radius: 12px;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+          }
+          .header {
+              text-align: center;
+              margin-bottom: 40px;
+              padding-bottom: 20px;
+              border-bottom: 2px solid #e9ecef;
+          }
+          .header h1 {
+              color: #2c3e50;
+              margin-bottom: 10px;
+              font-size: 28px;
+          }
+          .progress-indicator {
+              text-align: center;
+              margin-bottom: 30px;
+              padding: 15px;
+              background-color: #e7f3ff;
+              border-radius: 8px;
+          }
+          .section-title {
+              font-size: 20px;
+              font-weight: bold;
+              color: #2c3e50;
+              margin: 30px 0 20px 0;
+              padding-bottom: 10px;
+              border-bottom: 1px solid #dee2e6;
+          }
+          .question-block {
+              margin-bottom: 25px;
+              padding: 20px;
+              border-left: 4px solid #007bff;
+              background-color: #f8f9fa;
+              border-radius: 8px;
+          }
+          .question-title {
+              font-weight: 600;
+              margin-bottom: 15px;
+              color: #2c3e50;
+              font-size: 16px;
+          }
+          .abstract-display {
+              display: flex;
+              gap: 25px;
+              margin: 25px 0;
+          }
+          .abstract-box {
+              flex: 1;
+              padding: 20px;
+              border: 2px solid #dee2e6;
+              border-radius: 8px;
+              background-color: white;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+              position: relative;
+          }
+          .abstract-box.tracking {
+              border-color: #28a745;
+              box-shadow: 0 0 10px rgba(40,167,69,0.3);
+          }
+          .abstract-title {
+              font-weight: bold;
+              margin-bottom: 15px;
+              color: #007bff;
+              font-size: 18px;
+              text-align: center;
+          }
+          .abstract-text {
+              line-height: 1.8;
+              font-size: 16px;
+              color: #495057;
+              text-align: justify;
+          }
+          .likert-scale {
+              display: flex;
+              justify-content: space-between;
+              margin: 15px 0;
+              gap: 5px;
+          }
+          .likert-option {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              flex: 1;
+              padding: 8px;
+              border-radius: 6px;
+              transition: background-color 0.2s;
+          }
+          .likert-option:hover {
+              background-color: #f8f9fa;
+          }
+          .likert-option input[type="radio"] {
+              margin-bottom: 8px;
+              transform: scale(1.2);
+          }
+          .likert-option label {
+              font-size: 11px;
+              text-align: center;
+              color: #6c757d;
+              cursor: pointer;
+              font-weight: 500;
+          }
+          .continue-btn {
+              background: linear-gradient(135deg, #007bff, #0056b3);
+              color: white;
+              padding: 15px 40px;
+              border: none;
+              border-radius: 8px;
+              font-size: 18px;
+              font-weight: 600;
+              cursor: pointer;
+              margin-top: 30px;
+              transition: transform 0.2s, box-shadow 0.2s;
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+          }
+          .continue-btn:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba(0,123,255,0.3);
+          }
+          .required-indicator {
+              color: #dc3545;
+              font-weight: bold;
+          }
+          .reading-timer {
+              position: fixed;
+              top: 20px;
+              left: 20px;
+              background-color: rgba(40, 167, 69, 0.9);
+              color: white;
+              padding: 10px 15px;
+              border-radius: 8px;
+              font-weight: bold;
+              z-index: 1000;
+          }
+          #webgazerVideoFeed {
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              width: 150px;
+              height: 112px;
+              border: 2px solid #28a745;
+              border-radius: 8px;
+              z-index: 1000;
+          }
+          .gaze-dot {
+              position: fixed;
+              width: 10px;
+              height: 10px;
+              border-radius: 50%;
+              background-color: rgba(40, 167, 69, 0.7);
+              pointer-events: none;
+              z-index: 999;
+              display: none;
+          }
+          @media (max-width: 768px) {
+              .abstract-display {
+                  flex-direction: column;
+              }
+          }
+      </style>
+  </head>
+  <body>
+      <div class="reading-timer" id="readingTimer">Reading Time: 0:00</div>
+      <div class="gaze-dot" id="gazeDot"></div>
+
+      <div class="survey-container">
+          <div class="header">
+              <h1>Abstract Evaluation - Pair 2</h1>
+          </div>
+
+          <div class="progress-indicator">
+              <strong>Step 3 of 4:</strong> Abstract Pair 2 | Eye tracking
+  is active
+          </div>
+
+          <div class="section-title">📄 Abstract Comparison</div>
+          <p style="color: #6c757d; margin-bottom: 25px;">Please read both
+  abstracts carefully. Take your time to understand the content. Your eye
+  movements continue to be tracked to understand reading patterns.</p>
+
+          <div class="question-block">
+              <div class="abstract-display">
+                  <div class="abstract-box" id="abstractA">
+                      <div class="abstract-title">Abstract A</div>
+                      <div class="abstract-text">This study underlies that
+  ethical reasoning facilitates moral judgment in artificial intelligence
+  systems. The analysis constrains algorithmic bias through dialectical
+  relationships that function as catalysts for technological change.
+  Research explains variance in discriminatory outcomes through mediating
+  variables that enable fair decision-making processes.</div>
+                  </div>
+                  <div class="abstract-box" id="abstractB">
+                      <div class="abstract-title">Abstract B</div>
+                      <div class="abstract-text">This study relates to
+  ethical reasoning that supports moral judgment in artificial intelligence
+   systems. The analysis reduces algorithmic bias through relationships
+  that act as factors for technological change. Research shows variation in
+   discriminatory outcomes through variables that support fair
+  decision-making processes.</div>
+                  </div>
+              </div>
+          </div>
+
+          <form id="abstract2Form" onsubmit="handleAbstract2(event)">
+              <div class="question-block">
+                  <div class="question-title">How clear is Abstract A?
+  <span class="required-indicator">*</span></div>
+                  <div class="likert-scale">
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_a_1" 
+  name="pair2_clarity_a" value="1" required>
+                          <label for="pair2_clarity_a_1">Very
+  unclear</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_a_2" 
+  name="pair2_clarity_a" value="2">
+                          <label for="pair2_clarity_a_2">Unclear</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_a_3" 
+  name="pair2_clarity_a" value="3">
+                          <label for="pair2_clarity_a_3">Neutral</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_a_4" 
+  name="pair2_clarity_a" value="4">
+                          <label for="pair2_clarity_a_4">Clear</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_a_5" 
+  name="pair2_clarity_a" value="5">
+                          <label for="pair2_clarity_a_5">Very clear</label>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="question-block">
+                  <div class="question-title">How clear is Abstract B?
+  <span class="required-indicator">*</span></div>
+                  <div class="likert-scale">
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_b_1" 
+  name="pair2_clarity_b" value="1" required>
+                          <label for="pair2_clarity_b_1">Very
+  unclear</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_b_2" 
+  name="pair2_clarity_b" value="2">
+                          <label for="pair2_clarity_b_2">Unclear</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_b_3" 
+  name="pair2_clarity_b" value="3">
+                          <label for="pair2_clarity_b_3">Neutral</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_b_4" 
+  name="pair2_clarity_b" value="4">
+                          <label for="pair2_clarity_b_4">Clear</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_clarity_b_5" 
+  name="pair2_clarity_b" value="5">
+                          <label for="pair2_clarity_b_5">Very clear</label>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="question-block">
+                  <div class="question-title">How convincing are the causal
+   relationships described in Abstract A? <span 
+  class="required-indicator">*</span></div>
+                  <div class="likert-scale">
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_a_1" 
+  name="pair2_causal_a" value="1" required>
+                          <label for="pair2_causal_a_1">Not
+  convincing</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_a_2" 
+  name="pair2_causal_a" value="2">
+                          <label for="pair2_causal_a_2">Slightly
+  convincing</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_a_3" 
+  name="pair2_causal_a" value="3">
+                          <label for="pair2_causal_a_3">Moderately
+  convincing</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_a_4" 
+  name="pair2_causal_a" value="4">
+                          <label for="pair2_causal_a_4">Very
+  convincing</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_a_5" 
+  name="pair2_causal_a" value="5">
+                          <label for="pair2_causal_a_5">Extremely
+  convincing</label>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="question-block">
+                  <div class="question-title">How convincing are the causal
+   relationships described in Abstract B? <span 
+  class="required-indicator">*</span></div>
+                  <div class="likert-scale">
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_b_1" 
+  name="pair2_causal_b" value="1" required>
+                          <label for="pair2_causal_b_1">Not
+  convincing</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_b_2" 
+  name="pair2_causal_b" value="2">
+                          <label for="pair2_causal_b_2">Slightly
+  convincing</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_b_3" 
+  name="pair2_causal_b" value="3">
+                          <label for="pair2_causal_b_3">Moderately
+  convincing</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_b_4" 
+  name="pair2_causal_b" value="4">
+                          <label for="pair2_causal_b_4">Very
+  convincing</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_causal_b_5" 
+  name="pair2_causal_b" value="5">
+                          <label for="pair2_causal_b_5">Extremely
+  convincing</label>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="question-block">
+                  <div class="question-title">How confident do you feel
+  about the research claims in Abstract A? <span 
+  class="required-indicator">*</span></div>
+                  <div class="likert-scale">
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_a_1" 
+  name="pair2_confidence_a" value="1" required>
+                          <label for="pair2_confidence_a_1">Not
+  confident</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_a_2" 
+  name="pair2_confidence_a" value="2">
+                          <label for="pair2_confidence_a_2">Slightly
+  confident</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_a_3" 
+  name="pair2_confidence_a" value="3">
+                          <label for="pair2_confidence_a_3">Moderately
+  confident</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_a_4" 
+  name="pair2_confidence_a" value="4">
+                          <label for="pair2_confidence_a_4">Very
+  confident</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_a_5" 
+  name="pair2_confidence_a" value="5">
+                          <label for="pair2_confidence_a_5">Extremely
+  confident</label>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="question-block">
+                  <div class="question-title">How confident do you feel
+  about the research claims in Abstract B? <span 
+  class="required-indicator">*</span></div>
+                  <div class="likert-scale">
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_b_1" 
+  name="pair2_confidence_b" value="1" required>
+                          <label for="pair2_confidence_b_1">Not
+  confident</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_b_2" 
+  name="pair2_confidence_b" value="2">
+                          <label for="pair2_confidence_b_2">Slightly
+  confident</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_b_3" 
+  name="pair2_confidence_b" value="3">
+                          <label for="pair2_confidence_b_3">Moderately
+  confident</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_b_4" 
+  name="pair2_confidence_b" value="4">
+                          <label for="pair2_confidence_b_4">Very
+  confident</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="pair2_confidence_b_5" 
+  name="pair2_confidence_b" value="5">
+                          <label for="pair2_confidence_b_5">Extremely
+  confident</label>
+                      </div>
+                  </div>
+              </div>
+
+              <button type="submit" class="continue-btn">Continue to Final
+  Questions</button>
+          </form>
+      </div>
+
+      <script>
+          let startTime = Date.now();
+          let gazeData = [];
+          let readingTimeInterval;
+          let webgazerInitialized = false;
+
+          function initializeEyeTracking() {
+              if (sessionStorage.getItem('eyeTrackingCalibrated') !==
+  'true') {
+                  alert('Eye tracking not calibrated. Redirecting to 
+  calibration...');
+                  window.location.href = 'calibration.html';
+                  return;
+              }
+
+              webgazer.setRegression('ridge')
+                  .setTracker('clmtrackr')
+                  .setGazeListener(function(data, elapsedTime) {
+                      if (data == null) return;
+
+                      const gazePoint = {
+                          x: data.x,
+                          y: data.y,
+                          timestamp: Date.now(),
+                          elapsedTime: elapsedTime,
+                          page: 'abstract2'
+                      };
+
+                      gazeData.push(gazePoint);
+
+                      // Show gaze dot for visual feedback
+                      showGazeDot(data.x, data.y);
+
+                      // Check if gaze is on abstract boxes
+                      checkGazeOnAbstracts(data.x, data.y);
+                  })
+                  .begin()
+                  .then(() => {
+                      webgazerInitialized = true;
+                      console.log('Eye tracking initialized for Abstract 
+  2');
+                  });
+          }
+
+          function showGazeDot(x, y) {
+              const gazeDot = document.getElementById('gazeDot');
+              gazeDot.style.left = x + 'px';
+              gazeDot.style.top = y + 'px';
+              gazeDot.style.display = 'block';
+
+              setTimeout(() => {
+                  gazeDot.style.display = 'none';
+              }, 100);
+          }
+
+          function checkGazeOnAbstracts(x, y) {
+              const abstractA = document.getElementById('abstractA');
+              const abstractB = document.getElementById('abstractB');
+
+              const rectA = abstractA.getBoundingClientRect();
+              const rectB = abstractB.getBoundingClientRect();
+
+              // Reset highlighting
+              abstractA.classList.remove('tracking');
+              abstractB.classList.remove('tracking');
+
+              // Check if gaze is within abstract A
+              if (x >= rectA.left && x <= rectA.right && y >= rectA.top &&
+  y <= rectA.bottom) {
+                  abstractA.classList.add('tracking');
+              }
+
+              // Check if gaze is within abstract B
+              if (x >= rectB.left && x <= rectB.right && y >= rectB.top &&
+  y <= rectB.bottom) {
+                  abstractB.classList.add('tracking');
+              }
+          }
+
+          function updateReadingTimer() {
+              const elapsed = Math.floor((Date.now() - startTime) / 1000);
+              const minutes = Math.floor(elapsed / 60);
+              const seconds = elapsed % 60;
+              document.getElementById('readingTimer').textContent =
+                  `Reading Time: 
+  ${minutes}:${seconds.toString().padStart(2, '0')}`;
+          }
+
+          function handleAbstract2(event) {
+              event.preventDefault();
+
+              const formData = new FormData(event.target);
+              const data = {};
+
+              for (const pair of formData.entries()) {
+                  data[pair[0]] = pair[1];
+              }
+
+              // Add metadata
+              data.timestamp = new Date().toISOString();
+              data.readingTime = Date.now() - startTime;
+              data.gazeDataCount = gazeData.length;
+
+              // Store form data
+              sessionStorage.setItem('abstract2Data',
+  JSON.stringify(data));
+
+              // Store gaze data
+              sessionStorage.setItem('abstract2GazeData',
+  JSON.stringify(gazeData));
+
+              window.location.href = 'results.html';
+
+              return false;
+          }
+
+          // Initialize when page loads
+          window.addEventListener('load', () => {
+              initializeEyeTracking();
+              readingTimeInterval = setInterval(updateReadingTimer, 1000);
+          });
+
+          window.addEventListener('beforeunload', () => {
+              if (readingTimeInterval) {
+                  clearInterval(readingTimeInterval);
+              }
+          });
+      </script>
+  </body>
+  </html>
