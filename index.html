@@ -24,12 +24,6 @@
         <div class="info-box">
             <h3>🔍 Eye Tracking Study</h3>
             <p>This study includes eye tracking to understand how you read philosophical abstracts.</p>
-            <ol>
-                <li>Complete your demographic information.</li>
-                <li>Calibrate the eye tracking system.</li>
-                <li>Read two pairs of abstracts while we record your gaze.</li>
-                <li>Answer final questions.</li>
-            </ol>
         </div>
         <form id="demographicsForm" onsubmit="handleDemographics(event)">
             <div class="question-block">
@@ -56,9 +50,16 @@
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
             data.timestamp = new Date().toISOString();
-            data.session_id = 'session_' + Math.random().toString(36).substr(2, 9);
+            
+            // --- CÓDIGO AÑADIDO PARA PROLIFIC ---
+            const urlParams = new URLSearchParams(window.location.search);
+            data.prolific_pid = urlParams.get('PROLIFIC_PID') || 'not-available';
+            data.study_id = urlParams.get('STUDY_ID') || 'not-available';
+            data.session_id = urlParams.get('SESSION_ID') || 'not-available';
+            // --- FIN DEL CÓDIGO AÑADIDO ---
+            
             sessionStorage.setItem('demographicsData', JSON.stringify(data));
-            window.location.href = 'calibration.html';
+            window.location.href = 'calibration.html'; // O a experiment.html si usas la versión de página única
         }
     </script>
 </body>
