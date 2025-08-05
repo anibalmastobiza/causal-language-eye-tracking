@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abstract Evaluation - Pair 2</title>
+    <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; }
+        .container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .abstract-display { display: flex; gap: 25px; margin-top: 20px; }
+        .abstract-box { flex: 1; padding: 20px; border: 2px solid #dee2e6; border-radius: 8px; }
+        .abstract-title { font-weight: bold; margin-bottom: 15px; color: #007bff; font-size: 18px; text-align: center; }
+        .abstract-text { line-height: 1.8; text-align: justify; }
+        .continue-btn { background: #007bff; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; display: block; margin: 40px auto 0; }
+        
+        /* Loading Overlay */
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.9); z-index: 1002; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 1.5em; color: #333; }
+        #webgazerVideoFeed { position: fixed; top: 10px; right: 10px; border: 2px solid #28a745; z-index: 1000; }
+    </style>
+</head>
+<body>
+    <div id="loader-overlay">
+        <div>
+            <p>Iniciando cámara y seguimiento ocular...</p>
+            <p id="loader-status"></p>
+        </div>
+    </div>
 
+    <div id="experiment-content" style="visibility: hidden;">
+        <div class="container">
+            <h1>📖 Reading Task (Part 2 of 2)</h1>
+            <p>Please read this second pair of abstracts carefully. Click "Finish" when done.</p>
+            <div class="abstract-display">
+                <div class="abstract-box"><div class="abstract-title">Abstract A</div><div class="abstract-text">This study underlies that ethical reasoning facilitates moral judgment in artificial intelligence systems. The analysis constrains algorithmic bias through dialectical relationships that function as catalysts for technological change. Research explains variance in discriminatory outcomes through mediating variables that enable fair decision-making processes.</div></div>
+                <div class="abstract-box"><div class="abstract-title">Abstract B</div><div class="abstract-text">This study relates to ethical reasoning that supports moral judgment in artificial intelligence systems. The analysis reduces algorithmic bias through relationships that act as factors for technological change. Research shows variation in discriminatory outcomes through variables that support fair decision-making processes.</div></div>
+            </div>
+            <button class="continue-btn" onclick="goToNextStep()">Finish Reading Task</button>
+        </div>
+    </div>
+
+    <script>
+        let gazeData = [];
+
+        async function initializePage() {
+            try {
+                // Start WebGazer from scratch
+                await webgazer.setRegression('ridge').setGazeListener(gazeListener).begin();
+                webgazer.showVideoPreview(true).showPredictionPoints(true);
+                
+                // Success! Hide the loader and show the experiment.
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('experiment-content').style.visibility = 'visible';
+                console.log("WebGazer started successfully for Task 2.");
+
+            } catch (err) {
+                // Failure. Show an error message.
+                console.error(err);
+                document.getElementById('loader-status').innerText = 'Error: Could not activate camera. Please ensure permissions are granted and refresh the page.';
+            }
+        }
+
+        function gazeListener(data, elapsedTime) {
+            if (data == null) return;
+            gazeData.push({
+                x: data.x, y: data.y, time: elapsedTime, task: 2, timestamp: Date.now()
+            });
+        }
+
+        function goToNextStep() {
+            sessionStorage.setItem('abstract2GazeData', JSON.stringify(gazeData));
+            console.log(`Saved ${gazeData.length} gaze points for Task 2.`);
+            if (webgazer.isReady()) {
+                webgazer.end(); // Cleanly release camera for the final page
+            }
+            window.location.href = 'results.html';
+        }
+
+        // Start initialization when the page loads
+        window.onload = initializePage;
+    </script>
+</body>
+</html>
