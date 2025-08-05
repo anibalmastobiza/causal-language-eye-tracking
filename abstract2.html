@@ -13,40 +13,25 @@
         .section-title { font-size: 20px; font-weight: bold; color: #2c3e50; margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 1px solid #dee2e6; }
         .abstract-display { display: flex; gap: 25px; margin: 25px 0; }
         .abstract-box { flex: 1; padding: 20px; border: 2px solid #dee2e6; border-radius: 8px; }
-        .abstract-box.tracking { border-color: #28a745; box-shadow: 0 0 10px rgba(40,167,69,0.3); }
         .abstract-title { font-weight: bold; margin-bottom: 15px; color: #007bff; font-size: 18px; text-align: center; }
         .abstract-text { line-height: 1.8; font-size: 16px; color: #495057; text-align: justify; }
-        .question-block { margin-bottom: 25px; padding: 20px; border-left: 4px solid #007bff; background-color: #f8f9fa; border-radius: 8px; }
-        .question-title { font-weight: 600; margin-bottom: 15px; }
-        .likert-scale { display: flex; justify-content: space-between; margin: 15px 0; gap: 5px; }
-        .likert-option { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .likert-option input[type="radio"] { margin-bottom: 8px; transform: scale(1.2); }
-        .likert-option label { font-size: 11px; text-align: center; color: #6c757d; }
-        .continue-btn { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; display: block; margin: 30px auto 0; }
-        .required-indicator { color: #dc3545; font-weight: bold; }
+        .continue-btn { background: #007bff; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; display: block; margin: 40px auto 0; }
         .reading-timer { position: fixed; top: 20px; left: 20px; background-color: rgba(40, 167, 69, 0.9); color: white; padding: 10px 15px; border-radius: 8px; z-index: 1000; }
-        #webgazerVideoFeed { position: fixed; top: 20px; right: 20px; width: 150px; height: 112px; border: 2px solid #28a745; border-radius: 8px; z-index: 1000; }
+        #webgazerVideoFeed { position: fixed; top: 20px; right: 20px; width: 150px; height: 112px; border: 2px solid #28a745; z-index: 1000; }
     </style>
 </head>
 <body>
     <div class="reading-timer" id="readingTimer">Reading Time: 0:00</div>
     <div class="survey-container">
         <div class="header"><h1>Abstract Evaluation - Pair 2</h1></div>
-        <div class="progress-indicator"><strong>Step 3 of 4:</strong> Abstract Pair 2 | Eye tracking is active</div>
-        <div class="section-title">📄 Abstract Comparison</div>
-        <p>Please read both abstracts carefully. Your eye movements continue to be tracked.</p>
+        <div class="progress-indicator"><strong>Step 3 of 4:</strong> Reading Task | Eye tracking is active</div>
+        <div class="section-title">📄 Reading Task</div>
+        <p>Please read both abstracts carefully. When you are finished, click the "Continue" button below.</p>
         <div class="abstract-display">
             <div class="abstract-box" id="abstractA"><div class="abstract-title">Abstract A</div><div class="abstract-text">This study underlies that ethical reasoning facilitates moral judgment in artificial intelligence systems. The analysis constrains algorithmic bias through dialectical relationships that function as catalysts for technological change. Research explains variance in discriminatory outcomes through mediating variables that enable fair decision-making processes.</div></div>
             <div class="abstract-box" id="abstractB"><div class="abstract-title">Abstract B</div><div class="abstract-text">This study relates to ethical reasoning that supports moral judgment in artificial intelligence systems. The analysis reduces algorithmic bias through relationships that act as factors for technological change. Research shows variation in discriminatory outcomes through variables that support fair decision-making processes.</div></div>
         </div>
-
-        <form id="abstract2Form" onsubmit="handleAbstract2(event)">
-            <div class="question-block"><div class="question-title">How clear is Abstract A? <span class="required-indicator">*</span></div><div class="likert-scale"><div><input type="radio" id="p2a1" name="p2_clarity_a" value="1" required><label for="p2a1">Very unclear</label></div><div><input type="radio" id="p2a2" name="p2_clarity_a" value="2"><label for="p2a2">Unclear</label></div><div><input type="radio" id="p2a3" name="p2_clarity_a" value="3"><label for="p2a3">Neutral</label></div><div><input type="radio" id="p2a4" name="p2_clarity_a" value="4"><label for="p2a4">Clear</label></div><div><input type="radio" id="p2a5" name="p2_clarity_a" value="5"><label for="p2a5">Very clear</label></div></div></div>
-            <div class="question-block"><div class="question-title">How clear is Abstract B? <span class="required-indicator">*</span></div><div class="likert-scale"><div><input type="radio" id="p2b1" name="p2_clarity_b" value="1" required><label for="p2b1">Very unclear</label></div><div><input type="radio" id="p2b2" name="p2_clarity_b" value="2"><label for="p2b2">Unclear</label></div><div><input type="radio" id="p2b3" name="p2_clarity_b" value="3"><label for="p2b3">Neutral</label></div><div><input type="radio" id="p2b4" name="p2_clarity_b" value="4"><label for="p2b4">Clear</label></div><div><input type="radio" id="p2b5" name="p2_clarity_b" value="5"><label for="p2b5">Very clear</label></div></div></div>
-            <div class="question-block"><div class="question-title">How convincing are the causal relationships in Abstract A? <span class="required-indicator">*</span></div><div class="likert-scale"><div><input type="radio" id="p2ca1" name="p2_causal_a" value="1" required><label for="p2ca1">Not convincing</label></div><div><input type="radio" id="p2ca2" name="p2_causal_a" value="2"><label for="p2ca2">Slightly</label></div><div><input type="radio" id="p2ca3" name="p2_causal_a" value="3"><label for="p2ca3">Moderately</label></div><div><input type="radio" id="p2ca4" name="p2_causal_a" value="4"><label for="p2ca4">Very</label></div><div><input type="radio" id="p2ca5" name="p2_causal_a" value="5"><label for="p2ca5">Extremely</label></div></div></div>
-            <div class="question-block"><div class="question-title">How convincing are the causal relationships in Abstract B? <span class="required-indicator">*</span></div><div class="likert-scale"><div><input type="radio" id="p2cb1" name="p2_causal_b" value="1" required><label for="p2cb1">Not convincing</label></div><div><input type="radio" id="p2cb2" name="p2_causal_b" value="2"><label for="p2cb2">Slightly</label></div><div><input type="radio" id="p2cb3" name="p2_causal_b" value="3"><label for="p2cb3">Moderately</label></div><div><input type="radio" id="p2cb4" name="p2_causal_b" value="4"><label for="p2cb4">Very</label></div><div><input type="radio" id="p2cb5" name="p2_causal_b" value="5"><label for="p2cb5">Extremely</label></div></div></div>
-            <button type="submit" class="continue-btn">Continue to Final Questions</button>
-        </form>
+        <button id="continueBtn" class="continue-btn" onclick="goToNextStep()">Continue to Final Questions</button>
     </div>
 
     <script>
@@ -81,12 +66,11 @@
             document.getElementById('readingTimer').textContent = `Reading Time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        function handleAbstract2(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData.entries());
-            data.readingTime = Date.now() - startTime;
-            data.gazeDataCount = gazeData.length;
+        function goToNextStep() {
+            const data = {
+                readingTime: Date.now() - startTime,
+                gazeDataCount: gazeData.length
+            };
             sessionStorage.setItem('abstract2Data', JSON.stringify(data));
             sessionStorage.setItem('abstract2GazeData', JSON.stringify(gazeData));
             window.location.href = 'results.html';
@@ -95,7 +79,9 @@
         window.addEventListener('load', startEyeTracking);
         window.addEventListener('beforeunload', () => {
             if (readingTimeInterval) clearInterval(readingTimeInterval);
-            if (webgazer.isReady()) webgazer.end(); // END the session for good on the last tracking page.
+            if (webgazer.isReady()) {
+                webgazer.end(); // END the session completely on the last tracking page
+            }
         });
     </script>
 </body>
