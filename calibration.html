@@ -188,41 +188,43 @@
               {x: 90, y: 90}    // bottom-right
           ];
 
-          function initWebGazer() {
-              webgazer.setRegression('ridge')
-                  .setTracker('clmtrackr')
-                  .setGazeListener(function(data, elapsedTime) {
-                      if (data == null) return;
-                  })
-                  .begin()
-                  .then(() => {
-                      webgazerReady = true;
-                      updateStatus("WebGazer initialized. Ready for 
-  calibration.");
-                  })
-                  .catch((err) => {
-                      updateStatus("Error initializing WebGazer: " + err);
-                  });
-          }
+            function initWebGazer() {
+                return webgazer.setRegression('ridge')
+                    .setTracker('clmtrackr')
+                    .setGazeListener(function(data, elapsedTime) {
+                        if (data == null) return;
+                    })
+                    .begin()
+                    .then(() => {
+                        webgazerReady = true;
+                        updateStatus("WebGazer initialized. Starting calibration...");
+                        beginCalibration();
+                    })
+                    .catch((err) => {
+                        updateStatus("Error initializing WebGazer: " + err);
+                    });
+            }
 
-          function startCalibration() {
-              if (!webgazerReady) {
-                  updateStatus("Please wait for WebGazer to 
-  initialize...");
-                  return;
-              }
+            function startCalibration() {
+                if (!webgazerReady) {
+                    updateStatus("Requesting camera access...");
+                    initWebGazer();
+                    return;
+                }
+                beginCalibration();
+            }
 
-              isCalibrating = true;
-              currentPoint = 0;
-              calibrationPoints = [];
+            function beginCalibration() {
+                isCalibrating = true;
+                currentPoint = 0;
+                calibrationPoints = [];
 
-              document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('calibrationArea').classList.remove('hidden');
 
-  document.getElementById('calibrationArea').classList.remove('hidden');
-
-              webgazer.clearData();
-              showNextCalibrationPoint();
-          }
+                webgazer.clearData();
+                showNextCalibrationPoint();
+            }
 
           function showNextCalibrationPoint() {
               if (currentPoint >= calibrationPositions.length) {
@@ -318,11 +320,10 @@
    completed: ${currentPoint}/${calibrationPositions.length}`;
           }
 
-          // Initialize WebGazer when page loads
-          window.addEventListener('load', () => {
-              updateStatus("Initializing eye tracking system...");
-              initWebGazer();
-          });
+        // Display initial instructions on page load
+        window.addEventListener('load', () => {
+            updateStatus("Click \"Start Calibration\" to begin");
+        });
 
           window.addEventListener('beforeunload', () => {
               if (webgazer) {
