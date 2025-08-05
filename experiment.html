@@ -3,53 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reading Task</title>
+    <title>Eye Tracking Experiment</title>
     <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; }
         .container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .instructions { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 10px 20px; margin-bottom: 30px; text-align: left; }
+        .btn { background: #007bff; color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px; }
+        .btn:disabled { background: #6c757d; }
+        .hidden { display: none; }
+
+        /* Calibration Styles */
+        #calibration-section { text-align: center; }
+        #calibration-feedback { position: relative; width: 100%; height: 400px; border: 2px solid #dee2e6; border-radius: 8px; margin: 30px 0; }
+        .calibration-dot { width: 20px; height: 20px; border-radius: 50%; background-color: #dc3545; position: absolute; cursor: pointer; }
+
+        /* Reading Task Styles */
         .abstract-display { display: flex; gap: 25px; margin: 25px 0; }
         .abstract-box { flex: 1; padding: 20px; border: 2px solid #dee2e6; border-radius: 8px; }
         .abstract-title { font-weight: bold; margin-bottom: 15px; color: #007bff; font-size: 18px; text-align: center; }
         .abstract-text { line-height: 1.8; text-align: justify; }
-        .continue-btn { background: #007bff; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; display: block; margin: 40px auto 0; }
-        .hidden { display: none; }
         .reading-timer { position: fixed; top: 10px; left: 10px; background-color: rgba(0,0,0,0.7); color: white; padding: 10px 15px; border-radius: 8px; z-index: 1000; }
         #webgazerVideoFeed { position: fixed; top: 10px; right: 10px; border: 2px solid #28a745; z-index: 1000; }
     </style>
 </head>
 <body>
-    <div class="reading-timer" id="reading-timer">Reading Time: 0:00</div>
-    <div class="container">
-        <div id="task1">
-            <h1>Reading Task: Part 1 of 2</h1>
+    <div id="main-container" class="container">
+
+        <div id="calibration-section">
+            <h1>🔍 Step 1: Eye Tracking Calibration</h1>
+            <div class="instructions">
+                <p><strong>Please follow these steps carefully:</strong></p>
+                <ol>
+                    <li>Click 'Allow' when your browser asks for camera permission.</li>
+                    <li>A video of your face will appear. Make sure your eyes are clearly visible.</li>
+                    <li>Click the red dot each time it appears (9 times). Keep your head still.</li>
+                </ol>
+            </div>
+            <p id="status-message">Click the button below to start.</p>
+            <button id="start-btn" class="btn" onclick="startCalibration()">Start Calibration</button>
+            <div id="calibration-feedback" class="hidden"></div>
+        </div>
+
+        <div id="task1-section" class="hidden">
+            <div class="reading-timer" id="reading-timer1">Reading Time: 0:00</div>
+            <h1>📖 Step 2: Reading Task (Part 1 of 2)</h1>
             <p>Please read both abstracts carefully. Your eye movements are being recorded. Click "Continue" when you are finished.</p>
             <div class="abstract-display">
                 <div class="abstract-box"><div class="abstract-title">Abstract A</div><div class="abstract-text">This investigation sustains that consciousness underlies moral agency in decision-making processes. The research enables autonomous choice through mediating pathways that serve as the cornerstone of ethical reasoning frameworks. Statistical analysis reveals significant predictors that translate into measurable behavioral outcomes across diverse populations.</div></div>
                 <div class="abstract-box"><div class="abstract-title">Abstract B</div><div class="abstract-text">This investigation shows that consciousness relates to moral agency in decision-making processes. The research allows autonomous choice through pathways that act as important elements of ethical reasoning frameworks. Statistical analysis shows factors that lead to measurable behavioral outcomes across diverse populations.</div></div>
             </div>
-            <button class="continue-btn" onclick="nextTask()">Continue to Part 2</button>
+            <button class="btn" onclick="showNextTask()">Continue to Part 2</button>
         </div>
 
-        <div id="task2" class="hidden">
-            <h1>Reading Task: Part 2 of 2</h1>
+        <div id="task2-section" class="hidden">
+            <div class="reading-timer" id="reading-timer2">Reading Time: 0:00</div>
+            <h1>📖 Step 3: Reading Task (Part 2 of 2)</h1>
             <p>Please read this second pair of abstracts carefully. Your eye movements are still being recorded. Click "Finish" when you are done.</p>
             <div class="abstract-display">
                 <div class="abstract-box"><div class="abstract-title">Abstract A</div><div class="abstract-text">This study underlies that ethical reasoning facilitates moral judgment in artificial intelligence systems. The analysis constrains algorithmic bias through dialectical relationships that function as catalysts for technological change. Research explains variance in discriminatory outcomes through mediating variables that enable fair decision-making processes.</div></div>
                 <div class="abstract-box"><div class="abstract-title">Abstract B</div><div class="abstract-text">This study relates to ethical reasoning that supports moral judgment in artificial intelligence systems. The analysis reduces algorithmic bias through relationships that act as factors for technological change. Research shows variation in discriminatory outcomes through variables that support fair decision-making processes.</div></div>
             </div>
-            <button class="continue-btn" onclick="finishExperiment()">Finish Reading Task</button>
+            <button class="btn" onclick="finishExperiment()">Finish Reading Task</button>
         </div>
     </div>
 
     <script>
-        let startTime, timerInterval;
+        // Global state variables
         let gazeData = [];
-        let currentTask = 1;
+        let currentTask = 0; // 0=calibration, 1=task1, 2=task2
+        let timerInterval;
 
-        async function initializeExperiment() {
-            // This is the key: resume the session from the previous page
-            await webgazer.resume();
+        // --- CALIBRATION LOGIC ---
+        let clickCounter = 0;
+        const totalClicks = 9;
+
+        async function startCalibration() {
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = true;
+            updateStatus('Requesting camera access...');
+            
+            try {
+                await webgazer.setRegression('ridge').setTracker('clmtrackr').begin();
+                webgazer.showVideoPreview(true).showPredictionPoints(false);
+                document.getElementById('calibration-feedback').classList.remove('hidden');
+                startBtn.style.display = 'none';
+                spawnDot();
+            } catch (e) {
+                console.error(e);
+                updateStatus('Camera access denied. Please enable camera permissions and refresh the page.');
+            }
+        }
+
+        function spawnDot() {
+            updateStatus(`Click the red dot. (${clickCounter}/${totalClicks})`);
+            const feedbackBox = document.getElementById('calibration-feedback');
+            feedbackBox.innerHTML = '';
+            const dot = document.createElement('div');
+            dot.className = 'calibration-dot';
+            dot.style.left = `${Math.random() * 95}%`;
+            dot.style.top = `${Math.random() * 95}%`;
+            
+            dot.onclick = () => {
+                webgazer.recordScreenPosition(dot.offsetLeft + 10, dot.offsetTop + 10, 'click');
+                clickCounter++;
+                if (clickCounter >= totalClicks) {
+                    finishCalibration();
+                } else {
+                    spawnDot();
+                }
+            };
+            feedbackBox.appendChild(dot);
+        }
+
+        function finishCalibration() {
+            updateStatus('Calibration Complete!');
+            document.getElementById('calibration-feedback').innerHTML = '<p>Great! The experiment will begin now.</p>';
+            setTimeout(showNextTask, 2000); // Automatically start the first task after 2 seconds
+        }
+
+        function updateStatus(msg) {
+            document.getElementById('status-message').innerText = msg;
+        }
+
+
+        // --- EXPERIMENT FLOW LOGIC ---
+        function showNextTask() {
+            if (currentTask === 0) { // From calibration to task 1
+                currentTask = 1;
+                document.getElementById('calibration-section').classList.add('hidden');
+                document.getElementById('task1-section').classList.remove('hidden');
+                startGazeRecording();
+                startTimer('reading-timer1');
+            } else if (currentTask === 1) { // From task 1 to task 2
+                stopTimer();
+                sessionStorage.setItem('abstract1GazeData', JSON.stringify(gazeData));
+                console.log(`Saved ${gazeData.length} gaze points for Task 1.`);
+                
+                gazeData = []; // Reset gaze data for the next task
+                currentTask = 2;
+
+                document.getElementById('task1-section').classList.add('hidden');
+                document.getElementById('task2-section').classList.remove('hidden');
+                startTimer('reading-timer2'); // Restart timer for the new task
+            }
+        }
+
+        function startGazeRecording() {
             webgazer.setGazeListener((data, elapsedTime) => {
                 if (data == null) return;
                 gazeData.push({
@@ -58,48 +158,33 @@
                     time: elapsedTime,
                     task: currentTask // Tag data with the current task (1 or 2)
                 });
-            }).showVideoPreview(true);
-            
-            console.log("WebGazer has resumed successfully on the experiment page.");
-            startTimer();
+            });
+            console.log("Gaze recording is now active.");
         }
 
-        function startTimer() {
-            startTime = Date.now();
+        function startTimer(timerId) {
+            let startTime = Date.now();
+            const timerElement = document.getElementById(timerId);
             timerInterval = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                document.getElementById('reading-timer').innerText = `Reading Time: ${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
+                timerElement.innerText = `Reading Time: ${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
             }, 1000);
         }
 
-        function nextTask() {
-            // Save data for task 1
-            sessionStorage.setItem('abstract1GazeData', JSON.stringify(gazeData));
-            console.log(`Saved ${gazeData.length} gaze points for Task 1.`);
-            
-            // Reset for task 2
-            gazeData = [];
-            currentTask = 2;
-            
-            // Switch visibility
-            document.getElementById('task1').classList.add('hidden');
-            document.getElementById('task2').classList.remove('hidden');
+        function stopTimer() {
+            clearInterval(timerInterval);
         }
 
         function finishExperiment() {
-            // Save data for task 2
+            stopTimer();
             sessionStorage.setItem('abstract2GazeData', JSON.stringify(gazeData));
             console.log(`Saved ${gazeData.length} gaze points for Task 2.`);
 
-            // Stop WebGazer and the timer
-            clearInterval(timerInterval);
+            // Stop WebGazer completely and navigate
             webgazer.end();
-            
-            // Proceed to the final questions
             window.location.href = 'results.html';
         }
 
-        window.onload = initializeExperiment;
     </script>
 </body>
 </html>
