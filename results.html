@@ -1,9 +1,9 @@
+
 <!DOCTYPE html>
   <html lang="en">
   <head>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, 
-  initial-scale=1.0">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Final Questions & Results</title>
       <style>
           body {
@@ -176,8 +176,7 @@
           </div>
 
           <div class="progress-indicator">
-              <strong>Step 4 of 4:</strong> Final Questions | Eye tracking
-  data collected
+              <strong>Step 4 of 4:</strong> Final Questions | Eye tracking data collected
           </div>
 
           <div class="data-summary" id="dataSummary">
@@ -185,157 +184,111 @@
               <div id="summaryContent">
                   <div class="data-item">
                       <span class="data-label">Session Duration:</span>
-                      <span class="data-value" 
-  id="sessionDuration">Calculating...</span>
+                      <span class="data-value" id="sessionDuration">Calculating...</span>
                   </div>
                   <div class="data-item">
-                      <span class="data-label">Abstract 1 Reading
-  Time:</span>
-                      <span class="data-value" 
-  id="abstract1Time">Loading...</span>
+                      <span class="data-label">Abstract 1 Reading Time:</span>
+                      <span class="data-value" id="abstract1Time">Loading...</span>
                   </div>
                   <div class="data-item">
-                      <span class="data-label">Abstract 2 Reading
-  Time:</span>
-                      <span class="data-value" 
-  id="abstract2Time">Loading...</span>
+                      <span class="data-label">Abstract 2 Reading Time:</span>
+                      <span class="data-value" id="abstract2Time">Loading...</span>
                   </div>
                   <div class="data-item">
-                      <span class="data-label">Total Gaze Data
-  Points:</span>
-                      <span class="data-value" 
-  id="totalGazePoints">Loading...</span>
+                      <span class="data-label">Total Gaze Data Points:</span>
+                      <span class="data-value" id="totalGazePoints">Loading...</span>
                   </div>
                   <div class="data-item">
                       <span class="data-label">Eye Tracking Quality:</span>
-                      <span class="data-value" 
-  id="trackingQuality">Good</span>
+                      <span class="data-value" id="trackingQuality">Good</span>
                   </div>
               </div>
           </div>
 
           <form id="finalForm" onsubmit="handleFinalSubmit(event)">
-              <div class="section-title">💭 General Questions</div>
+              <div class="section-title">🧐 General Questions</div>
 
               <div class="question-block">
-                  <div class="question-title">Overall, which type of
-  abstract do you find more persuasive? <span 
-  class="required-indicator">*</span></div>
+                  <div class="question-title">Overall, which type of abstract do you find more persuasive? <span class="required-indicator">*</span></div>
                   <select name="general_persuasive" required>
                       <option value="">Select...</option>
-                      <option value="More_causal">Abstracts with more
-  explicit causal language (like "underlies", "facilitates",
-  "constrains")</option>
-                      <option value="Less_causal">Abstracts with less
-  explicit causal language (like "relates to", "supports",
-  "affects")</option>
-                      <option value="No_preference">No clear
-  preference</option>
+                      <option value="More_causal">Abstracts with more explicit causal language (like "underlies", "facilitates", "constrains")</option>
+                      <option value="Less_causal">Abstracts with less explicit causal language (like "relates to", "supports", "affects")</option>
+                      <option value="No_preference">No clear preference</option>
                   </select>
               </div>
 
               <div class="question-block">
-                  <div class="question-title">Do you think explicit causal
-  language makes research claims seem stronger? <span 
-  class="required-indicator">*</span></div>
+                  <div class="question-title">Do you think explicit causal language makes research claims seem stronger? <span class="required-indicator">*</span></div>
                   <div class="likert-scale">
                       <div class="likert-option">
-                          <input type="radio" id="general_stronger_1" 
-  name="general_stronger" value="1" required>
-                          <label for="general_stronger_1">Much
-  weaker</label>
+                          <input type="radio" id="general_stronger_1" name="general_stronger" value="1" required>
+                          <label for="general_stronger_1">Much weaker</label>
                       </div>
                       <div class="likert-option">
-                          <input type="radio" id="general_stronger_2" 
-  name="general_stronger" value="2">
-                          <label for="general_stronger_2">Slightly
-  weaker</label>
+                          <input type="radio" id="general_stronger_2" name="general_stronger" value="2">
+                          <label for="general_stronger_2">Slightly weaker</label>
                       </div>
                       <div class="likert-option">
-                          <input type="radio" id="general_stronger_3" 
-  name="general_stronger" value="3">
-                          <label for="general_stronger_3">No
-  difference</label>
+                          <input type="radio" id="general_stronger_3" name="general_stronger" value="3">
+                          <label for="general_stronger_3">No difference</label>
                       </div>
                       <div class="likert-option">
-                          <input type="radio" id="general_stronger_4" 
-  name="general_stronger" value="4">
-                          <label for="general_stronger_4">Slightly
-  stronger</label>
+                          <input type="radio" id="general_stronger_4" name="general_stronger" value="4">
+                          <label for="general_stronger_4">Slightly stronger</label>
                       </div>
                       <div class="likert-option">
-                          <input type="radio" id="general_stronger_5" 
-  name="general_stronger" value="5">
-                          <label for="general_stronger_5">Much
-  stronger</label>
+                          <input type="radio" id="general_stronger_5" name="general_stronger" value="5">
+                          <label for="general_stronger_5">Much stronger</label>
                       </div>
                   </div>
               </div>
 
               <div class="question-block">
-                  <div class="question-title">How comfortable did you feel
-  with the eye tracking during the study? <span 
-  class="required-indicator">*</span></div>
+                  <div class="question-title">How comfortable did you feel with the eye tracking during the study? <span class="required-indicator">*</span></div>
                   <div class="likert-scale">
                       <div class="likert-option">
-                          <input type="radio" id="comfort_1" 
-  name="eye_tracking_comfort" value="1" required>
+                          <input type="radio" id="comfort_1" name="eye_tracking_comfort" value="1" required>
                           <label for="comfort_1">Very uncomfortable</label>
                       </div>
                       <div class="likert-option">
-                          <input type="radio" id="comfort_2" 
-  name="eye_tracking_comfort" value="2">
+                          <input type="radio" id="comfort_2" name="eye_tracking_comfort" value="2">
                           <label for="comfort_2">Uncomfortable</label>
                       </div>
                       <div class="likert-option">
-                          <input type="radio" id="comfort_3" 
-  name="eye_tracking_comfort" value="3">
+                          <input type="radio" id="comfort_3" name="eye_tracking_comfort" value="3">
                           <label for="comfort_3">Neutral</label>
                       </div>
                       <div class="likert-option">
-                          <input type="radio" id="comfort_4" 
-  name="eye_tracking_comfort" value="4">
+                          <input type="radio" id="comfort_4" name="eye_tracking_comfort" value="4">
                           <label for="comfort_4">Comfortable</label>
                       </div>
                       <div class="likert-option">
-                          <input type="radio" id="comfort_5" 
-  name="eye_tracking_comfort" value="5">
+                          <input type="radio" id="comfort_5" name="eye_tracking_comfort" value="5">
                           <label for="comfort_5">Very comfortable</label>
                       </div>
                   </div>
               </div>
 
               <div class="question-block">
-                  <div class="question-title">Did you notice the eye
-  tracking affecting how you read the abstracts? <span 
-  class="required-indicator">*</span></div>
+                  <div class="question-title">Did you notice the eye tracking affecting how you read the abstracts? <span class="required-indicator">*</span></div>
                   <select name="tracking_influence" required>
                       <option value="">Select...</option>
-                      <option value="No_influence">No, I read
-  normally</option>
-                      <option value="Slight_influence">I was slightly more
-  conscious of my reading</option>
-                      <option value="Moderate_influence">I changed my
-  reading pattern somewhat</option>
-                      <option value="Strong_influence">I read very
-  differently than usual</option>
+                      <option value="No_influence">No, I read normally</option>
+                      <option value="Slight_influence">I was slightly more conscious of my reading</option>
+                      <option value="Moderate_influence">I changed my reading pattern somewhat</option>
+                      <option value="Strong_influence">I read very differently than usual</option>
                   </select>
               </div>
 
-              <button type="submit" class="submit-btn">Submit Complete
-  Survey</button>
+              <button type="submit" class="submit-btn">Submit Complete Survey</button>
           </form>
 
           <div class="completion-message" id="completionMessage">
-              <h3>🎉 Survey Completed Successfully!</h3>
-              <p>Thank you for your participation in this causal language
-  and eye tracking study. Your responses and eye movement data have been
-  recorded.</p>
-              <p><strong>Session ID:</strong> <span 
-  id="finalSessionId"></span></p>
-              <p>Your data will contribute to understanding how different
-  types of causal language affect reading patterns and comprehension in
-  philosophical texts.</p>
+              <h3>✅ Survey Completed Successfully!</h3>
+              <p>Thank you for your participation in this causal language and eye tracking study. Your responses and eye movement data have been recorded.</p>
+              <p><strong>Session ID:</strong> <span id="finalSessionId"></span></p>
+              <p>Your data will contribute to understanding how different types of causal language affect reading patterns and comprehension in philosophical texts.</p>
           </div>
       </div>
 
@@ -343,59 +296,42 @@
           let sessionStartTime = Date.now();
 
           function loadDataSummary() {
-              // Calculate session duration
-              const demographics =
-  JSON.parse(sessionStorage.getItem('demographicsData') || '{}');
+              const demographics = JSON.parse(sessionStorage.getItem('demographicsData') || '{}');
               if (demographics.timestamp) {
                   const start = new Date(demographics.timestamp);
-                  const duration = Math.floor((Date.now() -
-  start.getTime()) / 1000);
+                  const duration = Math.floor((Date.now() - start.getTime()) / 1000);
                   const minutes = Math.floor(duration / 60);
                   const seconds = duration % 60;
                   document.getElementById('sessionDuration').textContent =
                       `${minutes}:${seconds.toString().padStart(2, '0')}`;
               }
 
-              // Load abstract reading times
-              const abstract1Data =
-  JSON.parse(sessionStorage.getItem('abstract1Data') || '{}');
-              const abstract2Data =
-  JSON.parse(sessionStorage.getItem('abstract2Data') || '{}');
+              const abstract1Data = JSON.parse(sessionStorage.getItem('abstract1Data') || '{}');
+              const abstract2Data = JSON.parse(sessionStorage.getItem('abstract2Data') || '{}');
 
               if (abstract1Data.readingTime) {
-                  const time1 = Math.floor(abstract1Data.readingTime /
-  1000);
+                  const time1 = Math.floor(abstract1Data.readingTime / 1000);
                   document.getElementById('abstract1Time').textContent =
-                      `${Math.floor(time1 / 60)}:${(time1 % 
-  60).toString().padStart(2, '0')}`;
+                      `${Math.floor(time1 / 60)}:${(time1 % 60).toString().padStart(2, '0')}`;
               }
 
               if (abstract2Data.readingTime) {
-                  const time2 = Math.floor(abstract2Data.readingTime /
-  1000);
+                  const time2 = Math.floor(abstract2Data.readingTime / 1000);
                   document.getElementById('abstract2Time').textContent =
-                      `${Math.floor(time2 / 60)}:${(time2 % 
-  60).toString().padStart(2, '0')}`;
+                      `${Math.floor(time2 / 60)}:${(time2 % 60).toString().padStart(2, '0')}`;
               }
 
-              // Load gaze data counts
-              const gazeData1 =
-  JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]');
-              const gazeData2 =
-  JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]');
+              const gazeData1 = JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]');
+              const gazeData2 = JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]');
               const totalGazePoints = gazeData1.length + gazeData2.length;
 
-              document.getElementById('totalGazePoints').textContent =
-  totalGazePoints.toLocaleString();
+              document.getElementById('totalGazePoints').textContent = totalGazePoints.toLocaleString();
 
-              // Assess tracking quality
               let quality = 'Poor';
+              if (totalGazePoints > 500) quality = 'Acceptable';
               if (totalGazePoints > 1000) quality = 'Good';
               if (totalGazePoints > 2000) quality = 'Excellent';
-              if (totalGazePoints < 500) quality = 'Poor';
-
-              document.getElementById('trackingQuality').textContent =
-  quality;
+              document.getElementById('trackingQuality').textContent = quality;
           }
 
           function handleFinalSubmit(event) {
@@ -408,73 +344,98 @@
                   finalData[pair[0]] = pair[1];
               }
 
+              // --- Prolific Integration ---
+              // It's best practice to get Prolific params on the first page (index.html) and store them.
+              // For now, we'll try to retrieve them or use a default.
+              const urlParams = new URLSearchParams(window.location.search);
+              const prolificInfo = {
+                pid: urlParams.get('PROLIFIC_PID') || sessionStorage.getItem('prolificPID') || 'NOT_SET',
+                study_id: urlParams.get('STUDY_ID') || sessionStorage.getItem('studyID') || 'NOT_SET',
+                session_id: urlParams.get('SESSION_ID') || sessionStorage.getItem('sessionID') || 'NOT_SET'
+              };
+
               // Compile all data
               const completeData = {
-                  sessionId:
-  JSON.parse(sessionStorage.getItem('demographicsData') ||
-  '{}').session_id,
+                  prolificInfo: prolificInfo,
+                  sessionId: JSON.parse(sessionStorage.getItem('demographicsData') || '{}').session_id,
                   timestamp: new Date().toISOString(),
-                  demographics:
-  JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
-                  abstract1Responses:
-  JSON.parse(sessionStorage.getItem('abstract1Data') || '{}'),
-                  abstract2Responses:
-  JSON.parse(sessionStorage.getItem('abstract2Data') || '{}'),
+                  demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
+                  abstract1Responses: JSON.parse(sessionStorage.getItem('abstract1Data') || '{}'),
+                  abstract2Responses: JSON.parse(sessionStorage.getItem('abstract2Data') || '{}'),
                   finalQuestions: finalData,
                   eyeTrackingData: {
-                      abstract1:
-  JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
-                      abstract2:
-  JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
-                      calibrated:
-  sessionStorage.getItem('eyeTrackingCalibrated') === 'true',
-                      calibrationTimestamp:
-  sessionStorage.getItem('calibrationTimestamp')
+                      abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
+                      abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
+                      calibrated: sessionStorage.getItem('eyeTrackingCalibrated') === 'true',
+                      calibrationTimestamp: sessionStorage.getItem('calibrationTimestamp')
                   },
                   metadata: {
                       userAgent: navigator.userAgent,
                       screenResolution: `${screen.width}x${screen.height}`,
-                      viewportSize:
-  `${window.innerWidth}x${window.innerHeight}`,
+                      viewportSize: `${window.innerWidth}x${window.innerHeight}`,
                       completionTime: Date.now() - sessionStartTime
                   }
               };
 
-              // Log complete data (in production, send to server)
-              console.log('Complete Survey Data:', completeData);
+              // In a real study, you must send 'completeData' to your backend server.
+              // Replace 'https://your-backend-server.com/save-data' with your actual endpoint.
+              /*
+              fetch('https://your-backend-server.com/save-data', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(completeData),
+              })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Server response was not ok.');
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  console.log('Successfully saved data:', data);
+                  // Redirect to Prolific's completion URL.
+                  // Replace with your actual Prolific completion URL.
+                  window.location.href = 'https://app.prolific.com/submissions/complete?cc=YOUR_COMPLETION_CODE';
+              })
+              .catch((error) => {
+                  console.error('Error saving data:', error);
+                  alert("A critical error occurred while saving your data. Please contact the researcher with your session ID.");
+              });
+              */
 
-              // Store final data
-              sessionStorage.setItem('completeSurveyData',
-  JSON.stringify(completeData));
-
-              // Show completion message
+              // For demonstration purposes, we log the data and show the completion message.
+              console.log('Complete Survey Data:', JSON.stringify(completeData, null, 2));
+              sessionStorage.setItem('completeSurveyData', JSON.stringify(completeData));
+              
               document.getElementById('finalForm').style.display = 'none';
-              document.getElementById('completionMessage').style.display =
-  'block';
-              document.getElementById('finalSessionId').textContent =
-  completeData.sessionId;
+              document.getElementById('dataSummary').style.display = 'none';
+              
+              const completionMessage = document.getElementById('completionMessage');
+              completionMessage.style.display = 'block';
+              document.getElementById('finalSessionId').textContent = completeData.sessionId;
+              
+              const redirectMsg = document.createElement('p');
+              redirectMsg.style.marginTop = '20px';
+              redirectMsg.style.fontWeight = 'bold';
+              redirectMsg.innerHTML = "In a live study, you would now be redirected back to Prolific to confirm your submission.";
+              
+              if(!completionMessage.querySelector('p[style*="font-weight: bold"]')){
+                 completionMessage.appendChild(redirectMsg);
+              }
 
-              // Scroll to completion message
-              document.getElementById('completionMessage').scrollIntoView({
-   behavior: 'smooth' });
+              completionMessage.scrollIntoView({ behavior: 'smooth' });
 
               return false;
           }
 
-          // Initialize when page loads
           window.addEventListener('load', () => {
               loadDataSummary();
-
-              // Set session start time from demographics if available
-              const demographics =
-  JSON.parse(sessionStorage.getItem('demographicsData') || '{}');
+              const demographics = JSON.parse(sessionStorage.getItem('demographicsData') || '{}');
               if (demographics.timestamp) {
-                  sessionStartTime = new
-  Date(demographics.timestamp).getTime();
+                  sessionStartTime = new Date(demographics.timestamp).getTime();
               }
           });
 
-          // Clean up WebGazer if it's still running
           window.addEventListener('beforeunload', () => {
               if (typeof webgazer !== 'undefined' && webgazer.isReady()) {
                   webgazer.end();
@@ -483,3 +444,4 @@
       </script>
   </body>
   </html>
+
