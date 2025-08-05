@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, 
+  initial-scale=1.0">
+      <title>Final Questions & Results</title>
+      <style>
+          body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              max-width: 900px;
+              margin: 0 auto;
+              padding: 20px;
+              line-height: 1.6;
+              background-color: #f8f9fa;
+              color: #333;
+          }
+          .survey-container {
+              background-color: white;
+              padding: 40px;
+              border-radius: 12px;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+          }
+          .header {
+              text-align: center;
+              margin-bottom: 40px;
+              padding-bottom: 20px;
+              border-bottom: 2px solid #e9ecef;
+          }
+          .header h1 {
+              color: #2c3e50;
+              margin-bottom: 10px;
+              font-size: 28px;
+          }
+          .progress-indicator {
+              text-align: center;
+              margin-bottom: 30px;
+              padding: 15px;
+              background-color: #d4edda;
+              border: 1px solid #c3e6cb;
+              border-radius: 8px;
+              color: #155724;
+          }
+          .section-title {
+              font-size: 20px;
+              font-weight: bold;
+              color: #2c3e50;
+              margin: 30px 0 20px 0;
+              padding-bottom: 10px;
+              border-bottom: 1px solid #dee2e6;
+          }
+          .question-block {
+              margin-bottom: 25px;
+              padding: 20px;
+              border-left: 4px solid #007bff;
+              background-color: #f8f9fa;
+              border-radius: 8px;
+          }
+          .question-title {
+              font-weight: 600;
+              margin-bottom: 15px;
+              color: #2c3e50;
+              font-size: 16px;
+          }
+          .likert-scale {
+              display: flex;
+              justify-content: space-between;
+              margin: 15px 0;
+              gap: 5px;
+          }
+          .likert-option {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              flex: 1;
+              padding: 8px;
+              border-radius: 6px;
+              transition: background-color 0.2s;
+          }
+          .likert-option:hover {
+              background-color: #f8f9fa;
+          }
+          .likert-option input[type="radio"] {
+              margin-bottom: 8px;
+              transform: scale(1.2);
+          }
+          .likert-option label {
+              font-size: 11px;
+              text-align: center;
+              color: #6c757d;
+              cursor: pointer;
+              font-weight: 500;
+          }
+          select {
+              width: 100%;
+              padding: 12px;
+              margin: 8px 0;
+              border: 2px solid #dee2e6;
+              border-radius: 6px;
+              font-size: 14px;
+              transition: border-color 0.2s;
+          }
+          select:focus {
+              outline: none;
+              border-color: #007bff;
+          }
+          .submit-btn {
+              background: linear-gradient(135deg, #28a745, #1e7e34);
+              color: white;
+              padding: 15px 40px;
+              border: none;
+              border-radius: 8px;
+              font-size: 18px;
+              font-weight: 600;
+              cursor: pointer;
+              margin-top: 30px;
+              transition: transform 0.2s, box-shadow 0.2s;
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+          }
+          .submit-btn:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba(40,167,69,0.3);
+          }
+          .required-indicator {
+              color: #dc3545;
+              font-weight: bold;
+          }
+          .data-summary {
+              background-color: #e7f3ff;
+              border: 1px solid #b8daff;
+              border-radius: 8px;
+              padding: 20px;
+              margin-bottom: 30px;
+          }
+          .data-summary h3 {
+              color: #0066cc;
+              margin-bottom: 15px;
+          }
+          .data-item {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 8px;
+              padding: 5px 0;
+              border-bottom: 1px solid #dee2e6;
+          }
+          .data-label {
+              font-weight: 600;
+              color: #495057;
+          }
+          .data-value {
+              color: #007bff;
+              font-weight: 500;
+          }
+          .completion-message {
+              background-color: #d4edda;
+              border: 1px solid #c3e6cb;
+              color: #155724;
+              padding: 20px;
+              border-radius: 8px;
+              text-align: center;
+              margin-top: 30px;
+              display: none;
+          }
+          .completion-message h3 {
+              margin-bottom: 15px;
+              color: #155724;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="survey-container">
+          <div class="header">
+              <h1>Final Questions & Summary</h1>
+          </div>
+
+          <div class="progress-indicator">
+              <strong>Step 4 of 4:</strong> Final Questions | Eye tracking
+  data collected
+          </div>
+
+          <div class="data-summary" id="dataSummary">
+              <h3>📊 Data Collection Summary</h3>
+              <div id="summaryContent">
+                  <div class="data-item">
+                      <span class="data-label">Session Duration:</span>
+                      <span class="data-value" 
+  id="sessionDuration">Calculating...</span>
+                  </div>
+                  <div class="data-item">
+                      <span class="data-label">Abstract 1 Reading
+  Time:</span>
+                      <span class="data-value" 
+  id="abstract1Time">Loading...</span>
+                  </div>
+                  <div class="data-item">
+                      <span class="data-label">Abstract 2 Reading
+  Time:</span>
+                      <span class="data-value" 
+  id="abstract2Time">Loading...</span>
+                  </div>
+                  <div class="data-item">
+                      <span class="data-label">Total Gaze Data
+  Points:</span>
+                      <span class="data-value" 
+  id="totalGazePoints">Loading...</span>
+                  </div>
+                  <div class="data-item">
+                      <span class="data-label">Eye Tracking Quality:</span>
+                      <span class="data-value" 
+  id="trackingQuality">Good</span>
+                  </div>
+              </div>
+          </div>
+
+          <form id="finalForm" onsubmit="handleFinalSubmit(event)">
+              <div class="section-title">💭 General Questions</div>
+
+              <div class="question-block">
+                  <div class="question-title">Overall, which type of
+  abstract do you find more persuasive? <span 
+  class="required-indicator">*</span></div>
+                  <select name="general_persuasive" required>
+                      <option value="">Select...</option>
+                      <option value="More_causal">Abstracts with more
+  explicit causal language (like "underlies", "facilitates",
+  "constrains")</option>
+                      <option value="Less_causal">Abstracts with less
+  explicit causal language (like "relates to", "supports",
+  "affects")</option>
+                      <option value="No_preference">No clear
+  preference</option>
+                  </select>
+              </div>
+
+              <div class="question-block">
+                  <div class="question-title">Do you think explicit causal
+  language makes research claims seem stronger? <span 
+  class="required-indicator">*</span></div>
+                  <div class="likert-scale">
+                      <div class="likert-option">
+                          <input type="radio" id="general_stronger_1" 
+  name="general_stronger" value="1" required>
+                          <label for="general_stronger_1">Much
+  weaker</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="general_stronger_2" 
+  name="general_stronger" value="2">
+                          <label for="general_stronger_2">Slightly
+  weaker</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="general_stronger_3" 
+  name="general_stronger" value="3">
+                          <label for="general_stronger_3">No
+  difference</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="general_stronger_4" 
+  name="general_stronger" value="4">
+                          <label for="general_stronger_4">Slightly
+  stronger</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="general_stronger_5" 
+  name="general_stronger" value="5">
+                          <label for="general_stronger_5">Much
+  stronger</label>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="question-block">
+                  <div class="question-title">How comfortable did you feel
+  with the eye tracking during the study? <span 
+  class="required-indicator">*</span></div>
+                  <div class="likert-scale">
+                      <div class="likert-option">
+                          <input type="radio" id="comfort_1" 
+  name="eye_tracking_comfort" value="1" required>
+                          <label for="comfort_1">Very uncomfortable</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="comfort_2" 
+  name="eye_tracking_comfort" value="2">
+                          <label for="comfort_2">Uncomfortable</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="comfort_3" 
+  name="eye_tracking_comfort" value="3">
+                          <label for="comfort_3">Neutral</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="comfort_4" 
+  name="eye_tracking_comfort" value="4">
+                          <label for="comfort_4">Comfortable</label>
+                      </div>
+                      <div class="likert-option">
+                          <input type="radio" id="comfort_5" 
+  name="eye_tracking_comfort" value="5">
+                          <label for="comfort_5">Very comfortable</label>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="question-block">
+                  <div class="question-title">Did you notice the eye
+  tracking affecting how you read the abstracts? <span 
+  class="required-indicator">*</span></div>
+                  <select name="tracking_influence" required>
+                      <option value="">Select...</option>
+                      <option value="No_influence">No, I read
+  normally</option>
+                      <option value="Slight_influence">I was slightly more
+  conscious of my reading</option>
+                      <option value="Moderate_influence">I changed my
+  reading pattern somewhat</option>
+                      <option value="Strong_influence">I read very
+  differently than usual</option>
+                  </select>
+              </div>
+
+              <button type="submit" class="submit-btn">Submit Complete
+  Survey</button>
+          </form>
+
+          <div class="completion-message" id="completionMessage">
+              <h3>🎉 Survey Completed Successfully!</h3>
+              <p>Thank you for your participation in this causal language
+  and eye tracking study. Your responses and eye movement data have been
+  recorded.</p>
+              <p><strong>Session ID:</strong> <span 
+  id="finalSessionId"></span></p>
+              <p>Your data will contribute to understanding how different
+  types of causal language affect reading patterns and comprehension in
+  philosophical texts.</p>
+          </div>
+      </div>
+
+      <script>
+          let sessionStartTime = Date.now();
+
+          function loadDataSummary() {
+              // Calculate session duration
+              const demographics =
+  JSON.parse(sessionStorage.getItem('demographicsData') || '{}');
+              if (demographics.timestamp) {
+                  const start = new Date(demographics.timestamp);
+                  const duration = Math.floor((Date.now() -
+  start.getTime()) / 1000);
+                  const minutes = Math.floor(duration / 60);
+                  const seconds = duration % 60;
+                  document.getElementById('sessionDuration').textContent =
+                      `${minutes}:${seconds.toString().padStart(2, '0')}`;
+              }
+
+              // Load abstract reading times
+              const abstract1Data =
+  JSON.parse(sessionStorage.getItem('abstract1Data') || '{}');
+              const abstract2Data =
+  JSON.parse(sessionStorage.getItem('abstract2Data') || '{}');
+
+              if (abstract1Data.readingTime) {
+                  const time1 = Math.floor(abstract1Data.readingTime /
+  1000);
+                  document.getElementById('abstract1Time').textContent =
+                      `${Math.floor(time1 / 60)}:${(time1 % 
+  60).toString().padStart(2, '0')}`;
+              }
+
+              if (abstract2Data.readingTime) {
+                  const time2 = Math.floor(abstract2Data.readingTime /
+  1000);
+                  document.getElementById('abstract2Time').textContent =
+                      `${Math.floor(time2 / 60)}:${(time2 % 
+  60).toString().padStart(2, '0')}`;
+              }
+
+              // Load gaze data counts
+              const gazeData1 =
+  JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]');
+              const gazeData2 =
+  JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]');
+              const totalGazePoints = gazeData1.length + gazeData2.length;
+
+              document.getElementById('totalGazePoints').textContent =
+  totalGazePoints.toLocaleString();
+
+              // Assess tracking quality
+              let quality = 'Poor';
+              if (totalGazePoints > 1000) quality = 'Good';
+              if (totalGazePoints > 2000) quality = 'Excellent';
+              if (totalGazePoints < 500) quality = 'Poor';
+
+              document.getElementById('trackingQuality').textContent =
+  quality;
+          }
+
+          function handleFinalSubmit(event) {
+              event.preventDefault();
+
+              const formData = new FormData(event.target);
+              const finalData = {};
+
+              for (const pair of formData.entries()) {
+                  finalData[pair[0]] = pair[1];
+              }
+
+              // Compile all data
+              const completeData = {
+                  sessionId:
+  JSON.parse(sessionStorage.getItem('demographicsData') ||
+  '{}').session_id,
+                  timestamp: new Date().toISOString(),
+                  demographics:
+  JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
+                  abstract1Responses:
+  JSON.parse(sessionStorage.getItem('abstract1Data') || '{}'),
+                  abstract2Responses:
+  JSON.parse(sessionStorage.getItem('abstract2Data') || '{}'),
+                  finalQuestions: finalData,
+                  eyeTrackingData: {
+                      abstract1:
+  JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
+                      abstract2:
+  JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
+                      calibrated:
+  sessionStorage.getItem('eyeTrackingCalibrated') === 'true',
+                      calibrationTimestamp:
+  sessionStorage.getItem('calibrationTimestamp')
+                  },
+                  metadata: {
+                      userAgent: navigator.userAgent,
+                      screenResolution: `${screen.width}x${screen.height}`,
+                      viewportSize:
+  `${window.innerWidth}x${window.innerHeight}`,
+                      completionTime: Date.now() - sessionStartTime
+                  }
+              };
+
+              // Log complete data (in production, send to server)
+              console.log('Complete Survey Data:', completeData);
+
+              // Store final data
+              sessionStorage.setItem('completeSurveyData',
+  JSON.stringify(completeData));
+
+              // Show completion message
+              document.getElementById('finalForm').style.display = 'none';
+              document.getElementById('completionMessage').style.display =
+  'block';
+              document.getElementById('finalSessionId').textContent =
+  completeData.sessionId;
+
+              // Scroll to completion message
+              document.getElementById('completionMessage').scrollIntoView({
+   behavior: 'smooth' });
+
+              return false;
+          }
+
+          // Initialize when page loads
+          window.addEventListener('load', () => {
+              loadDataSummary();
+
+              // Set session start time from demographics if available
+              const demographics =
+  JSON.parse(sessionStorage.getItem('demographicsData') || '{}');
+              if (demographics.timestamp) {
+                  sessionStartTime = new
+  Date(demographics.timestamp).getTime();
+              }
+          });
+
+          // Clean up WebGazer if it's still running
+          window.addEventListener('beforeunload', () => {
+              if (typeof webgazer !== 'undefined' && webgazer.isReady()) {
+                  webgazer.end();
+              }
+          });
+      </script>
+  </body>
+  </html>
