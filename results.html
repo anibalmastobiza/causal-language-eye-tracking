@@ -5,76 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Final Questions & Results</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; background-color: #f8f9fa; color: #333; }
-        .survey-container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .header h1 { color: #2c3e50; font-size: 28px; }
-        .progress-indicator { text-align: center; margin-bottom: 30px; padding: 15px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; color: #155724; }
-        .section-title { font-size: 20px; font-weight: bold; color: #2c3e50; margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 1px solid #dee2e6; }
+        body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; }
+        .container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .data-summary { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
         .question-block { margin-bottom: 25px; padding: 20px; border-left: 4px solid #007bff; background-color: #f8f9fa; border-radius: 8px; }
         .question-title { font-weight: 600; margin-bottom: 15px; }
-        .likert-scale { display: flex; justify-content: space-between; margin: 15px 0; gap: 5px; }
-        .likert-option { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; }
-        .submit-btn { background: #28a745; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; display: block; margin: 30px auto 0; }
-        .required-indicator { color: #dc3545; font-weight: bold; }
-        .data-summary { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
-        .data-item { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 5px 0; border-bottom: 1px solid #dee2e6; }
-        .completion-message { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin-top: 30px; display: none; }
+        select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #dee2e6; border-radius: 6px; }
+        .submit-btn { background: #28a745; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; }
+        .completion-message { text-align: center; display: none; }
     </style>
 </head>
 <body>
-    <div class="survey-container">
-        <div class="header"><h1>Final Questions & Summary</h1></div>
-        <div class="progress-indicator"><strong>Step 4 of 4:</strong> Final Questions | Eye tracking data collected</div>
-        <div class="data-summary" id="dataSummary">
-            <h3>📊 Data Collection Summary</h3>
-            <div id="summaryContent">
-                <div class="data-item"><span>Abstract 1 Reading Time:</span><span id="abstract1Time">Loading...</span></div>
-                <div class="data-item"><span>Abstract 2 Reading Time:</span><span id="abstract2Time">Loading...</span></div>
-                <div class="data-item"><span>Total Gaze Data Points:</span><span id="totalGazePoints">Loading...</span></div>
+    <div class="container">
+        <div id="form-container">
+            <h1>Final Questions & Summary</h1>
+            <div class="data-summary">
+                <h3>📊 Data Collection Summary</h3>
+                <p>Gaze points recorded (Task 1): <strong id="gaze-count-1">0</strong></p>
+                <p>Gaze points recorded (Task 2): <strong id="gaze-count-2">0</strong></p>
             </div>
+            <form id="finalForm" onsubmit="handleFinalSubmit(event)">
+                <div class="question-block">
+                    <label class="question-title">Overall, which type of abstract do you find more persuasive?</label>
+                    <select name="general_persuasive" required>
+                        <option value="">Select...</option>
+                        <option value="More_causal">Abstracts with more explicit causal language</option>
+                        <option value="Less_causal">Abstracts with less explicit causal language</option>
+                        <option value="No_preference">No clear preference</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Submit Complete Survey</button>
+            </form>
         </div>
-        <form id="finalForm" onsubmit="handleFinalSubmit(event)">
-            <div class="section-title">🧐 General Questions</div>
-            <div class="question-block"><div class="question-title">Overall, which type of abstract do you find more persuasive? <span class="required-indicator">*</span></div><select name="general_persuasive" required><option value="">Select...</option><option value="More_causal">Abstracts with more explicit causal language</option><option value="Less_causal">Abstracts with less explicit causal language</option><option value="No_preference">No clear preference</option></select></div>
-            <div class="question-block"><div class="question-title">How comfortable did you feel with the eye tracking during the study? <span class="required-indicator">*</span></div><select name="eye_tracking_comfort" required><option value="">Select...</option><option value="1">Very uncomfortable</option><option value="2">Uncomfortable</option><option value="3">Neutral</option><option value="4">Comfortable</option><option value="5">Very comfortable</option></select></div>
-            <button type="submit" class="submit-btn">Submit Complete Survey</button>
-        </form>
-        <div class="completion-message" id="completionMessage">
-            <h3>✅ Survey Completed Successfully!</h3>
-            <p>Thank you for your participation. Your data has been recorded.</p>
-            <p><strong>Session ID:</strong> <span id="finalSessionId"></span></p>
-            <p style="margin-top:20px; font-weight:bold;">You may now close this window.</p>
+        <div id="completion-message" class="completion-message">
+            <h2>✅ Survey Completed Successfully!</h2>
+            <p>Thank you for your participation. Your data has been recorded. You may now close this window.</p>
         </div>
     </div>
-
     <script>
-        function loadDataSummary() {
-            const abstract1Data = JSON.parse(sessionStorage.getItem('abstract1Data') || '{}');
-            const abstract2Data = JSON.parse(sessionStorage.getItem('abstract2Data') || '{}');
+        function loadSummary() {
             const gazeData1 = JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]');
             const gazeData2 = JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]');
-            
-            const formatTime = (ms) => ms ? `${Math.floor(ms/1000/60)}m ${Math.floor(ms/1000)%60}s` : 'N/A';
-            document.getElementById('abstract1Time').textContent = formatTime(abstract1Data.readingTime);
-            document.getElementById('abstract2Time').textContent = formatTime(abstract2Data.readingTime);
-            document.getElementById('totalGazePoints').textContent = (gazeData1.length + gazeData2.length).toLocaleString();
+            document.getElementById('gaze-count-1').textContent = gazeData1.length;
+            document.getElementById('gaze-count-2').textContent = gazeData2.length;
         }
 
         function handleFinalSubmit(event) {
             event.preventDefault();
             const formData = new FormData(event.target);
             const finalQuestions = Object.fromEntries(formData.entries());
-            const demographics = JSON.parse(sessionStorage.getItem('demographicsData') || '{}');
-            
+
             const completeData = {
-                prolificInfo: { pid: demographics.prolific_pid, study_id: demographics.study_id, session_id: demographics.prolific_session_id },
-                sessionId: demographics.session_id,
-                demographics: demographics,
-                readingTask: {
-                    abstract1: JSON.parse(sessionStorage.getItem('abstract1Data') || '{}'),
-                    abstract2: JSON.parse(sessionStorage.getItem('abstract2Data') || '{}')
-                },
+                demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
                 finalQuestions: finalQuestions,
                 eyeTrackingData: {
                     abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
@@ -83,18 +65,13 @@
             };
             
             console.log("Complete Survey Data:", JSON.stringify(completeData, null, 2));
-            // In production, send 'completeData' to your server here.
-            
-            document.getElementById('finalForm').style.display = 'none';
-            document.getElementById('dataSummary').style.display = 'none';
-            document.getElementById('completionMessage').style.display = 'block';
-            document.getElementById('finalSessionId').textContent = completeData.sessionId || 'N/A';
+            // En un estudio real, envía 'completeData' a tu servidor aquí.
 
-            // To finalize for Prolific, uncomment the line below and add your completion URL
-            // window.location.href = "https://app.prolific.com/submissions/complete?cc=YOUR_CODE";
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('completion-message').style.display = 'block';
         }
 
-        window.addEventListener('load', loadDataSummary);
+        window.onload = loadSummary;
     </script>
 </body>
 </html>
