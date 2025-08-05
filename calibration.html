@@ -174,7 +174,6 @@
           let currentPoint = 0;
           let calibrationPoints = [];
           let isCalibrating = false;
-          let webgazerReady = false;
 
           const calibrationPositions = [
               {x: 10, y: 10},   // top-left
@@ -188,41 +187,43 @@
               {x: 90, y: 90}    // bottom-right
           ];
 
-          function initWebGazer() {
-              webgazer.setRegression('ridge')
-                  .setTracker('clmtrackr')
-                  .setGazeListener(function(data, elapsedTime) {
-                      if (data == null) return;
-                  })
-                  .begin()
-                  .then(() => {
-                      webgazerReady = true;
-                      updateStatus("WebGazer initialized. Ready for 
-  calibration.");
-                  })
-                  .catch((err) => {
-                      updateStatus("Error initializing WebGazer: " + err);
-                  });
-          }
+            function startCalibration() {
+                if (typeof webgazer === 'undefined') {
+                    updateStatus("WebGazer failed to load. Check your internet connection.");
+                    return;
+                }
+                updateStatus("Requesting camera access...");
 
-          function startCalibration() {
-              if (!webgazerReady) {
-                  updateStatus("Please wait for WebGazer to 
-  initialize...");
-                  return;
-              }
+                webgazer
+                    .setRegression('ridge')
+                    .setTracker('clmtrackr')
+                    .setGazeListener(function(data, elapsedTime) {
+                        if (data == null) return;
+                    })
+                    .saveDataAcrossSessions(true);
 
-              isCalibrating = true;
-              currentPoint = 0;
-              calibrationPoints = [];
+                webgazer.begin()
+                    .then(() => {
+                        updateStatus("WebGazer initialized. Starting calibration...");
+                        beginCalibration();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        updateStatus("Camera access was denied. Please allow camera access and try again.");
+                    });
+            }
 
-              document.getElementById('startBtn').classList.add('hidden');
+            function beginCalibration() {
+                isCalibrating = true;
+                currentPoint = 0;
+                calibrationPoints = [];
 
-  document.getElementById('calibrationArea').classList.remove('hidden');
+                document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('calibrationArea').classList.remove('hidden');
 
-              webgazer.clearData();
-              showNextCalibrationPoint();
-          }
+                webgazer.clearData();
+                showNextCalibrationPoint();
+            }
 
           function showNextCalibrationPoint() {
               if (currentPoint >= calibrationPositions.length) {
@@ -235,8 +236,7 @@
 
               const point = document.createElement('div');
               point.className = 'calibration-point active';
-              point.style.left = calibrationPositions[currentPoint].x +
-  '%';
+              point.style.left = calibrationPositions[currentPoint].x + '%';
               point.style.top = calibrationPositions[currentPoint].y + '%';
 
               point.onclick = function() {
@@ -318,11 +318,10 @@
    completed: ${currentPoint}/${calibrationPositions.length}`;
           }
 
-          // Initialize WebGazer when page loads
-          window.addEventListener('load', () => {
-              updateStatus("Initializing eye tracking system...");
-              initWebGazer();
-          });
+        // Display initial instructions on page load
+        window.addEventListener('load', () => {
+            updateStatus("Click \"Start Calibration\" to begin");
+        });
 
           window.addEventListener('beforeunload', () => {
               if (webgazer) {
