@@ -8,48 +8,45 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; background-color: #f8f9fa; color: #333; }
         .survey-container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         .header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #e9ecef; }
-        .header h1 { color: #2c3e50; margin-bottom: 10px; font-size: 28px; }
-        .header p { color: #6c757d; font-size: 16px; max-width: 600px; margin: 0 auto; }
-        .section-title { font-size: 20px; font-weight: bold; color: #2c3e50; margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 1px solid #dee2e6; }
-        .question-block { margin-bottom: 25px; padding: 20px; border-left: 4px solid #007bff; background-color: #f8f9fa; border-radius: 8px; }
-        .question-title { font-weight: 600; margin-bottom: 15px; color: #2c3e50; font-size: 16px; }
-        .likert-scale { display: flex; justify-content: space-between; margin: 15px 0; gap: 5px; }
-        .likert-option { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .likert-option input[type="radio"] { margin-bottom: 8px; transform: scale(1.2); }
-        .likert-option label { font-size: 11px; text-align: center; color: #6c757d; cursor: pointer; }
-        select, input[type="number"] { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; }
-        .continue-btn { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; display: block; margin: 30px auto 0; }
-        .required-indicator { color: #dc3545; font-weight: bold; }
-        .demographics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .info-box { background-color: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
-        @media (max-width: 768px) { .demographics-grid { grid-template-columns: 1fr; } }
+        .question-block { margin-bottom: 25px; padding: 20px; border-left: 4px solid #007bff; background-color: #f8f9fa; border-radius: 8px; }
+        .question-title { font-weight: 600; margin-bottom: 15px; }
+        select, input { width: 100%; box-sizing: border-box; padding: 12px; margin: 8px 0; border: 2px solid #dee2e6; border-radius: 6px; }
+        .continue-btn { background: #007bff; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; display: block; margin: 30px auto 0; }
+        .required-indicator { color: #dc3545; }
     </style>
 </head>
 <body>
     <div class="survey-container">
         <div class="header">
             <h1>Causal Language in Philosophical Writing Survey</h1>
-            <p>This survey examines how different types of language affect the clarity and comprehension of philosophical abstracts. The survey takes approximately 8-10 minutes to complete.</p>
         </div>
         <div class="info-box">
             <h3>🔍 Eye Tracking Study</h3>
-            <p>This study includes eye tracking technology to understand how you read and process philosophical abstracts. We will collect data about where you look and how long you focus on different parts of the text.</p>
-            <p><strong>Next steps:</strong></p>
+            <p>This study includes eye tracking to understand how you read philosophical abstracts.</p>
             <ol>
-                <li>Complete your demographic information below.</li>
+                <li>Complete your demographic information.</li>
                 <li>Calibrate the eye tracking system.</li>
-                <li>Read philosophical abstracts.</li>
-                <li>Complete final questions.</li>
+                <li>Read two pairs of abstracts while we record your gaze.</li>
+                <li>Answer final questions.</li>
             </ol>
         </div>
         <form id="demographicsForm" onsubmit="handleDemographics(event)">
-            <div class="section-title">📋 About You</div>
-            <div class="demographics-grid">
-                <div class="question-block"><div class="question-title">Age <span class="required-indicator">*</span></div><input type="number" name="demo_age" min="18" max="100" required></div>
-                <div class="question-block"><div class="question-title">Gender <span class="required-indicator">*</span></div><select name="demo_gender" required><option value="">Select...</option><option value="Female">Female</option><option value="Male">Male</option><option value="Non-binary">Non-binary</option><option value="Other">Other</option><option value="Prefer not to say">Prefer not to say</option></select></div>
+            <div class="question-block">
+                <label class="question-title">Age <span class="required-indicator">*</span></label>
+                <input type="number" name="demo_age" min="18" max="100" required>
             </div>
-            <div class="question-block"><div class="question-title">Education level <span class="required-indicator">*</span></div><select name="demo_education" required><option value="">Select...</option><option value="High school">High school or equivalent</option><option value="Some college">Some college</option><option value="Bachelor's">Bachelor's degree</option><option value="Master's">Master's degree</option><option value="Doctoral">Doctoral degree</option><option value="Other">Other</option></select></div>
-            <div class="question-block"><div class="question-title">How familiar are you with academic philosophy? <span class="required-indicator">*</span></div><div class="likert-scale"><div><input type="radio" id="f1" name="philosophy_familiarity" value="1" required><label for="f1">Not familiar</label></div><div><input type="radio" id="f2" name="philosophy_familiarity" value="2"><label for="f2">Slightly</label></div><div><input type="radio" id="f3" name="philosophy_familiarity" value="3"><label for="f3">Moderately</label></div><div><input type="radio" id="f4" name="philosophy_familiarity" value="4"><label for="f4">Very</label></div><div><input type="radio" id="f5" name="philosophy_familiarity" value="5"><label for="f5">Extremely</label></div></div></div>
+            <div class="question-block">
+                <label class="question-title">Gender <span class="required-indicator">*</span></label>
+                <select name="demo_gender" required>
+                    <option value="">Select...</option>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Non-binary">Non-binary</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+            </div>
             <button type="submit" class="continue-btn">Continue to Calibration</button>
         </form>
     </div>
@@ -60,13 +57,8 @@
             const data = Object.fromEntries(formData.entries());
             data.timestamp = new Date().toISOString();
             data.session_id = 'session_' + Math.random().toString(36).substr(2, 9);
-            // Prolific Integration: Capture URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            data.prolific_pid = urlParams.get('PROLIFIC_PID') || 'not-available';
-            data.study_id = urlParams.get('STUDY_ID') || 'not-available';
-            data.prolific_session_id = urlParams.get('SESSION_ID') || 'not-available';
             sessionStorage.setItem('demographicsData', JSON.stringify(data));
-            window.location.href = 'calibration.html';
+            window.location.href = 'experiment.html';
         }
     </script>
 </body>
