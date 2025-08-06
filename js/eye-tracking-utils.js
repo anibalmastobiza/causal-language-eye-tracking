@@ -166,6 +166,46 @@
       }
 
       /**
+       * NEW: Calculate Total Dwell Time on Areas of Interest (AOIs)
+       */
+      calculateDwellTimeOnAOIs(gazeData) {
+          const aoiElements = document.querySelectorAll('.aoi');
+          const dwellTimes = {};
+
+          aoiElements.forEach(el => {
+              // Use innerText and add a unique identifier if there are duplicate words
+              const key = `${el.innerText.trim()}_${Math.random().toString(36).substr(2, 5)}`;
+              dwellTimes[key] = 0;
+          });
+          
+          if (gazeData.length < 2) {
+              return dwellTimes;
+          }
+
+          for (let i = 0; i < gazeData.length - 1; i++) {
+              const currentGaze = gazeData[i];
+              const nextGaze = gazeData[i+1];
+              
+              aoiElements.forEach(el => {
+                  if (this.isGazeOnElement(currentGaze.x, currentGaze.y, el)) {
+                      const key = Object.keys(dwellTimes).find(k => k.startsWith(el.innerText.trim()));
+                      if(key) {
+                           // Ensure elapsedTime is a number before calculating difference
+                           const duration = (typeof nextGaze.time === 'number' && typeof currentGaze.time === 'number') 
+                                            ? nextGaze.time - currentGaze.time
+                                            : 0;
+                           if (duration > 0 && duration < 500) { // Add a threshold to avoid large gaps
+                              dwellTimes[key] += duration;
+                           }
+                      }
+                  }
+              });
+          }
+          
+          return dwellTimes;
+      }
+
+      /**
        * Get gaze data for a specific time range
        */
       getGazeDataInRange(startTime, endTime) {
