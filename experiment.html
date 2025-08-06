@@ -25,6 +25,7 @@
         .abstract-text { line-height: 1.8; text-align: justify; }
         .reading-timer { position: fixed; top: 10px; left: 10px; background-color: rgba(0,0,0,0.7); color: white; padding: 10px 15px; border-radius: 8px; z-index: 1000; }
         #webgazerVideoFeed { position: fixed; top: 10px; right: 10px; border: 2px solid #28a745; z-index: 1000; }
+        .aoi { font-weight: bold; color: #d9534f; }
     </style>
 </head>
 <body>
@@ -50,8 +51,8 @@
             <h1>📖 Step 2: Reading Task (Part 1 of 2)</h1>
             <p>Please read both abstracts carefully. Your eye movements are being recorded. Click "Continue" when you are finished.</p>
             <div class="abstract-display">
-                <div class="abstract-box"><div class="abstract-title">Abstract A</div><div class="abstract-text">This investigation sustains that consciousness underlies moral agency in decision-making processes. The research enables autonomous choice through mediating pathways that serve as the cornerstone of ethical reasoning frameworks. Statistical analysis reveals significant predictors that translate into measurable behavioral outcomes across diverse populations.</div></div>
-                <div class="abstract-box"><div class="abstract-title">Abstract B</div><div class="abstract-text">This investigation shows that consciousness relates to moral agency in decision-making processes. The research allows autonomous choice through pathways that act as important elements of ethical reasoning frameworks. Statistical analysis shows factors that lead to measurable behavioral outcomes across diverse populations.</div></div>
+                <div class="abstract-box"><div class="abstract-title">Abstract A</div><div class="abstract-text">This investigation <span class="aoi">sustains</span> that consciousness <span class="aoi">underlies</span> moral agency in decision-making processes. The research <span class="aoi">enables</span> autonomous choice through <span class="aoi">mediating</span> pathways that serve as the cornerstone of ethical reasoning frameworks. Statistical analysis <span class="aoi">reveals</span> significant predictors that <span class="aoi">translate</span> into <span class="aoi">measurable</span> behavioral outcomes across diverse populations.</div></div>
+                <div class="abstract-box"><div class="abstract-title">Abstract B</div><div class="abstract-text">This investigation <span class="aoi">shows</span> that consciousness <span class="aoi">relates</span> to moral agency in decision-making processes. The research <span class="aoi">allows</span> autonomous choice through pathways that act as important elements of ethical reasoning frameworks. Statistical analysis <span class="aoi">shows</span> factors that lead to <span class="aoi">measurable</span> behavioral outcomes across diverse populations.</div></div>
             </div>
             <button class="btn" onclick="showNextTask()">Continue to Part 2</button>
         </div>
@@ -61,13 +62,14 @@
             <h1>📖 Step 3: Reading Task (Part 2 of 2)</h1>
             <p>Please read this second pair of abstracts carefully. Your eye movements are still being recorded. Click "Finish" when you are done.</p>
             <div class="abstract-display">
-                <div class="abstract-box"><div class="abstract-title">Abstract A</div><div class="abstract-text">This study underlies that ethical reasoning facilitates moral judgment in artificial intelligence systems. The analysis constrains algorithmic bias through dialectical relationships that function as catalysts for technological change. Research explains variance in discriminatory outcomes through mediating variables that enable fair decision-making processes.</div></div>
-                <div class="abstract-box"><div class="abstract-title">Abstract B</div><div class="abstract-text">This study relates to ethical reasoning that supports moral judgment in artificial intelligence systems. The analysis reduces algorithmic bias through relationships that act as factors for technological change. Research shows variation in discriminatory outcomes through variables that support fair decision-making processes.</div></div>
+                <div class="abstract-box"><div class="abstract-title">Abstract A</div><div class="abstract-text">This study <span class="aoi">underlies</span> that ethical reasoning facilitates moral judgment in artificial intelligence systems. The analysis <span class="aoi">constrains</span> algorithmic bias through dialectical relationships that function as catalysts for technological change. Research <span class="aoi">explains</span> variance in discriminatory outcomes through <span class="aoi">mediating</span> variables that enable fair decision-making processes.</div></div>
+                <div class="abstract-box"><div class="abstract-title">Abstract B</div><div class="abstract-text">This study <span class="aoi">relates</span> to ethical reasoning that <span class="aoi">supports</span> moral judgment in artificial intelligence systems. The analysis <span class="aoi">reduces</span> algorithmic bias through relationships that act as factors for technological change. Research <span class="aoi">shows</span> variation in discriminatory outcomes through variables that <span class="aoi">support</span> fair decision-making processes.</div></div>
             </div>
             <button class="btn" onclick="finishExperiment()">Finish Reading Task</button>
         </div>
     </div>
 
+    <script src="js/eye-tracking-utils.js"></script>
     <script>
         // Global state variables
         let gazeData = [];
@@ -137,8 +139,11 @@
                 startTimer('reading-timer1');
             } else if (currentTask === 1) { // From task 1 to task 2
                 stopTimer();
+                const dwellTime1 = window.eyeTracker.calculateDwellTimeOnAOIs(gazeData);
                 sessionStorage.setItem('abstract1GazeData', JSON.stringify(gazeData));
+                sessionStorage.setItem('abstract1DwellTime', JSON.stringify(dwellTime1));
                 console.log(`Saved ${gazeData.length} gaze points for Task 1.`);
+                console.log('Dwell Time for Task 1:', dwellTime1);
                 
                 gazeData = []; // Reset gaze data for the next task
                 currentTask = 2;
@@ -177,8 +182,11 @@
 
         function finishExperiment() {
             stopTimer();
+            const dwellTime2 = window.eyeTracker.calculateDwellTimeOnAOIs(gazeData);
             sessionStorage.setItem('abstract2GazeData', JSON.stringify(gazeData));
+            sessionStorage.setItem('abstract2DwellTime', JSON.stringify(dwellTime2));
             console.log(`Saved ${gazeData.length} gaze points for Task 2.`);
+            console.log('Dwell Time for Task 2:', dwellTime2);
 
             // Stop WebGazer completely and navigate
             webgazer.end();
