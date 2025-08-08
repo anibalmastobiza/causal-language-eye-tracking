@@ -59,6 +59,8 @@
             // --- FIN DEL CÓDIGO AÑADIDO ---
             
             sessionStorage.setItem('demographicsData', JSON.stringify(data));
+            sessionStorage.setItem('prolificInfo', JSON.stringify(prolificInfo)); // Línea clave
+    
             window.location.href = 'calibration.html'; // O a experiment.html si usas la versión de página única
         }
     </script>
