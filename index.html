@@ -23,7 +23,7 @@
         </div>
         <div class="info-box">
             <h3>🔍 Eye Tracking Study</h3>
-            <p>This study includes eye tracking to understand how you read philosophical abstracts. Put it in full screen at all times to see everything.</p>
+            <p>This study includes eye tracking to understand how you read philosophical abstracts. Please ensure you are in a well-lit room and grant camera access when prompted. For the best experience, please use a desktop or laptop computer and maximize your browser window.</p>
         </div>
         <form id="demographicsForm" onsubmit="handleDemographics(event)">
             <div class="question-block">
@@ -51,17 +51,21 @@
             const data = Object.fromEntries(formData.entries());
             data.timestamp = new Date().toISOString();
             
-            // --- CÓDIGO AÑADIDO PARA PROLIFIC ---
+            // --- CORRECTED PROLIFIC INTEGRATION ---
             const urlParams = new URLSearchParams(window.location.search);
-            data.prolific_pid = urlParams.get('PROLIFIC_PID') || 'not-available';
-            data.study_id = urlParams.get('STUDY_ID') || 'not-available';
-            data.session_id = urlParams.get('SESSION_ID') || 'not-available';
-            // --- FIN DEL CÓDIGO AÑADIDO ---
+            // Create the prolificInfo object that was missing
+            const prolificInfo = {
+                prolific_pid: urlParams.get('PROLIFIC_PID') || 'not-available',
+                study_id: urlParams.get('STUDY_ID') || 'not-available',
+                session_id: urlParams.get('SESSION_ID') || 'not-available'
+            };
             
+            // Store both sets of data in sessionStorage to pass between pages
             sessionStorage.setItem('demographicsData', JSON.stringify(data));
-            sessionStorage.setItem('prolificInfo', JSON.stringify(prolificInfo)); // Línea clave
+            sessionStorage.setItem('prolificInfo', JSON.stringify(prolificInfo)); // Now this line works correctly
     
-            window.location.href = 'calibration.html'; // O a experiment.html si usas la versión de página única
+            // Redirect to the next step
+            window.location.href = 'calibration.html';
         }
     </script>
 </body>
