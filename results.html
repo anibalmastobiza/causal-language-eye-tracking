@@ -71,8 +71,29 @@
                 }
             };
             
+                        // --- INICIO DEL CÓDIGO A AÑADIR ---
+            const completeData = {
+                prolificInfo: JSON.parse(sessionStorage.getItem('prolificInfo') || '{}'),
+                demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
+                finalQuestions: finalQuestions,
+                eyeTrackingData: {
+                    abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
+                    abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
+                },
+                studyType: "eye_tracking_v1" // Identificador del estudio
+            };
+
             console.log("Complete Survey Data:", JSON.stringify(completeData, null, 2));
-            // En un estudio real, aquí enviarías `completeData` a tu servidor.
+            
+            const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxZ2XBwXAwpGvCEe7VWzctioklh8eeDYvjLo0ULNlvd_1t953KPK1Q78Pnd3N4ETlQk/exec'; // <-- ¡PEGA TU MISMA URL AQUÍ!
+
+            fetch(googleAppScriptURL, {
+              method: 'POST',
+              mode: 'no-cors', // Importante para evitar errores de CORS
+              cache: 'no-cache',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(completeData)
+            });
             
             // Muestra el mensaje de finalización
             document.getElementById('form-container').style.display = 'none';
