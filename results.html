@@ -57,21 +57,12 @@
         function loadSummary() {}
 
         function handleFinalSubmit(event) {
-            event.preventDefault();
+            event.preventDefault(); // Previene que el formulario se envíe de la forma tradicional.
+
             const formData = new FormData(event.target);
             const finalQuestions = Object.fromEntries(formData.entries());
 
-            const completeData = {
-                prolificInfo: JSON.parse(sessionStorage.getItem('prolificInfo') || '{}'),
-                demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
-                finalQuestions: finalQuestions,
-                eyeTrackingData: {
-                    abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
-                    abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
-                }
-            };
-            
-                        // --- INICIO DEL CÓDIGO A AÑADIR ---
+            // 1. Unificar TODOS los datos en un solo objeto (SIN REDECLARAR)
             const completeData = {
                 prolificInfo: JSON.parse(sessionStorage.getItem('prolificInfo') || '{}'),
                 demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
@@ -83,32 +74,27 @@
                 studyType: "eye_tracking_v1" // Identificador del estudio
             };
 
-            console.log("Complete Survey Data:", JSON.stringify(completeData, null, 2));
+            console.log("Datos completos a enviar:", JSON.stringify(completeData, null, 2));
             
-            const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxZ2XBwXAwpGvCEe7VWzctioklh8eeDYvjLo0ULNlvd_1t953KPK1Q78Pnd3N4ETlQk/exec'; // <-- ¡PEGA TU MISMA URL AQUÍ!
+            // 2. Enviar los datos a Google Sheets
+            const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxZ2XBwXAwpGvCEe7VWzctioklh8eeDYvjLo0ULNlvd_1t953KPK1Q78Pnd3N4ETlQk/exec';
 
+            // Usamos fetch para enviar los datos de forma asíncrona
             fetch(googleAppScriptURL, {
               method: 'POST',
-              mode: 'no-cors', // Importante para evitar errores de CORS
+              mode: 'no-cors', // Importante para evitar errores de CORS con Google Scripts
               cache: 'no-cache',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(completeData)
             });
             
-            // Muestra el mensaje de finalización
+            // 3. Mostrar el mensaje de finalización al usuario
             document.getElementById('form-container').style.display = 'none';
             document.getElementById('completion-message').style.display = 'block';
 
-            // --- CÓDIGO AÑADIDO PARA PROLIFIC ---
+            // 4. Redirigir a Prolific
             const prolificCompletionURL = "https://app.prolific.com/submissions/complete?cc=CUNHJ72P"; 
-
-            // Redirige al usuario después de 3 segundos
             setTimeout(() => {
                 window.location.href = prolificCompletionURL;
-            }, 3000);
+            }, 3000); // 3 segundos de espera para que el usuario lea el mensaje.
         }
-
-        window.onload = loadSummary;
-    </script>
-</body>
-</html>
