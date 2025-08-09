@@ -53,68 +53,41 @@
         </div>
     </div>
     <script>
-    // --- INICIO DEL SCRIPT DEFINITIVO ---
+    // --- INICIO DEL SCRIPT DE DIAGNÓSTICO ---
 
-// Esta es la función que recopila y envía los datos.
-function handleFinalSubmit(event) {
-    // Previene que la página se recargue, que es el comportamiento por defecto de un formulario.
-    event.preventDefault(); 
-    console.log("✔️ Formulario enviado. Iniciando la recopilación de datos.");
-
-    try {
-        const finalQuestions = Object.fromEntries(new FormData(event.target).entries());
-
-        const completeData = {
-            prolificInfo: JSON.parse(sessionStorage.getItem('prolificInfo') || '{}'),
-            demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
-            finalQuestions: finalQuestions,
-            eyeTrackingData: {
-                abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
-                abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
-            },
-            studyType: "eye_tracking_v5_fixed"
-        };
-        
-        console.log("✔️ Datos compilados. Enviando a Google Sheets...");
-
-        const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxCOAPtkBKdiZRz0A2vws95BK0jzD56nF-gxfqnVB7Ok7kazhSCkWU3-89gUvRc-zl8/exec'; // Tu URL de producción
-        
-        fetch(googleAppScriptURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify(completeData)
-        });
-
-        console.log("✔️ Petición de envío realizada. Mostrando mensaje final.");
-        document.getElementById('form-container').style.display = 'none';
-        document.getElementById('completion-message').style.display = 'block';
-
-        const prolificCompletionURL = "https://app.prolific.com/submissions/complete?cc=CUNHJ72P";
-        
-        setTimeout(() => {
-            console.log("✔️ Redirigiendo a Prolific.");
-            window.location.href = prolificCompletionURL;
-        }, 3000);
-
-    } catch (error) {
-        console.error("❌ ERROR CRÍTICO DENTRO DE handleFinalSubmit:", error);
-        alert("Ha ocurrido un error inesperado. Revisa la consola (F12) para ver los detalles.");
-    }
-}
-
-// Esta es la parte clave: esperamos a que toda la página se cargue.
+// Esta función se encarga de asignar el evento al formulario cuando la página ha cargado
 window.onload = function() {
-    console.log("✔️ Página cargada. Buscando el formulario...");
-    // Buscamos el formulario por su ID.
+    console.log("DIAGNÓSTICO: Página cargada. Buscando el formulario...");
     const form = document.getElementById('finalForm');
     
-    // Si lo encontramos, le asignamos la función handleFinalSubmit al evento 'submit'.
     if (form) {
+        // Si encuentra el formulario, le asigna la función 'handleFinalSubmit'
         form.addEventListener('submit', handleFinalSubmit);
-        console.log("✔️ Función 'handleFinalSubmit' asignada correctamente al formulario.");
+        console.log("DIAGNÓSTICO: El formulario se ha encontrado y el evento 'submit' ha sido asignado.");
     } else {
-        console.error("❌ No se pudo encontrar el formulario con el id 'finalForm'.");
+        // Si no encuentra el formulario, nos avisará en la consola
+        console.error("DIAGNÓSTICO: ¡ERROR! No se ha encontrado el elemento del formulario con id 'finalForm'.");
     }
 };
 
-// --- FIN DEL SCRIPT DEFINITIVO ---
+// Esta es la función que se ejecuta al pulsar el botón de enviar
+function handleFinalSubmit(event) {
+    // Previene que la página se recargue (esto es lo que causa el "bucle" si hay un error después)
+    event.preventDefault(); 
+    
+    // Si ves este mensaje en una alerta, significa que hemos logrado entrar en la función.
+    alert("DIAGNÓSTICO: ¡Éxito! La función 'handleFinalSubmit' se ha ejecutado. El bucle debería detenerse ahora.");
+    console.log("DIAGNÓSTICO: La función 'handleFinalSubmit' se ha ejecutado. El bucle debería haberse detenido.");
+
+    // --- El resto del código está desactivado por ahora para encontrar el error ---
+
+    // 1. Mostrar el mensaje de agradecimiento.
+    console.log("DIAGNÓSTICO: Mostrando el mensaje de finalización...");
+    document.getElementById('form-container').style.display = 'none';
+    document.getElementById('completion-message').style.display = 'block';
+    
+    // Por ahora, no haremos nada más. Ni enviar datos ni redirigir.
+    // Solo queremos confirmar que podemos detener el bucle.
+}
+
+// --- FIN DEL SCRIPT DE DIAGNÓSTICO ---
