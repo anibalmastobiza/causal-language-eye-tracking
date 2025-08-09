@@ -53,13 +53,17 @@
         </div>
     </div>
     <script>
-        // Esta función no se usa en la configuración actual pero se mantiene por compatibilidad
-        function loadSummary() {}
+        // --- INICIO DEL NUEVO SCRIPT ---
 
-       function handleFinalSubmit(event) {
-        event.preventDefault(); // Detiene el envío normal del formulario
+function handleFinalSubmit(event) {
+    // Detiene el comportamiento por defecto del formulario para que no recargue la página.
+    event.preventDefault();
 
-        // 1. Recopilar datos
+    console.log("✔️ PASO 1: Botón 'Complete Study' pulsado. Iniciando el proceso.");
+
+    try {
+        // --- Recopilación de datos ---
+        console.log("✔️ PASO 2: Recopilando datos del formulario y de la sesión...");
         const finalQuestions = Object.fromEntries(new FormData(event.target).entries());
 
         const completeData = {
@@ -70,26 +74,50 @@
                 abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
                 abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
             },
-            studyType: "eye_tracking_v4_final"
+            studyType: "eye_tracking_final_debug"
         };
-        
-        console.log("Datos listos para enviar:", completeData);
+        console.log("✔️ PASO 3: Datos compilados con éxito.", completeData);
 
-        // 2. Enviar datos a Google
-        const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxCOAPtkBKdiZRz0A2vws95BK0jzD56nF-gxfqnVB7Ok7kazhSCkWU3-89gUvRc-zl8/exec'; // <-- USA LA URL QUE TERMINA EN /exec
+        // --- Envío de datos ---
+        const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxCOAPtkBKdiZRz0A2vws95BK0jzD56nF-gxfqnVB7Ok7kazhSCkWU3-89gUvRc-zl8/exec'; // Tu URL de /exec
+        console.log("✔️ PASO 4: Preparando el envío de datos a Google Sheets.");
+        
         fetch(googleAppScriptURL, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify(completeData)
         });
+        console.log("✔️ PASO 5: Petición de envío de datos realizada.");
 
-        // 3. Mostrar mensaje de finalización
+        // --- Interfaz de usuario ---
+        console.log("✔️ PASO 6: Ocultando formulario y mostrando mensaje de agradecimiento.");
         document.getElementById('form-container').style.display = 'none';
         document.getElementById('completion-message').style.display = 'block';
 
-        // 4. Redirigir a Prolific
+        // --- Redirección a Prolific ---
         const prolificCompletionURL = "https://app.prolific.com/submissions/complete?cc=CUNHJ72P";
+        console.log("✔️ PASO 7: Programando redirección a Prolific en 3 segundos.");
+        
         setTimeout(() => {
+            console.log("✔️ PASO 8: Redirigiendo ahora a Prolific.");
             window.location.href = prolificCompletionURL;
         }, 3000);
+
+    } catch (error) {
+        // Si cualquier cosa en el bloque 'try' falla, se ejecutará este código.
+        console.error("❌ ¡ERROR CRÍTICO! El script ha fallado. El bucle se debe a este error:", error);
+        alert("Ha ocurrido un error. Por favor, revisa la consola de desarrollador (F12) para ver los detalles del error en rojo.");
     }
+}
+
+// Asegurarse de que el formulario está listo antes de añadir el listener.
+window.onload = function() {
+    const form = document.getElementById('finalForm');
+    if (form) {
+        form.addEventListener('submit', handleFinalSubmit);
+    } else {
+        console.error("❌ ERROR: No se ha encontrado el formulario con id 'finalForm'.");
+    }
+};
+
+// --- FIN DEL NUEVO SCRIPT ---
