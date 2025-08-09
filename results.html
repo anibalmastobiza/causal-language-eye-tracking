@@ -56,51 +56,40 @@
         // Esta función no se usa en la configuración actual pero se mantiene por compatibilidad
         function loadSummary() {}
 
-        function handleFinalSubmit(event) {
-            event.preventDefault(); // Previene el envío normal del formulario
+       function handleFinalSubmit(event) {
+        event.preventDefault(); // Detiene el envío normal del formulario
 
-            // Recopila las respuestas del formulario final
-            const formData = new FormData(event.target);
-            const finalQuestions = Object.fromEntries(formData.entries());
+        // 1. Recopilar datos
+        const finalQuestions = Object.fromEntries(new FormData(event.target).entries());
 
-            // 1. CREA EL OBJETO DE DATOS COMPLETO (UNA SOLA VEZ)
-            // Recoge todos los datos guardados en las páginas anteriores y los une con las preguntas finales.
-            const completeData = {
-                prolificInfo: JSON.parse(sessionStorage.getItem('prolificInfo') || '{}'),
-                demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
-                finalQuestions: finalQuestions,
-                eyeTrackingData: {
-                    abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
-                    abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
-                },
-                studyType: "eye_tracking_v2" // He cambiado la versión para que sepas qué datos son de la nueva versión
-            };
-            
-            // Muestra los datos en la consola para depuración (opcional)
-            console.log("Datos finales a enviar:", JSON.stringify(completeData, null, 2));
-            
-            // 2. ENVÍA LOS DATOS A TU GOOGLE SHEET
-            const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxG5Rt5BhKOJ0GPYo9-HpN7u_hnm14sVoEHUYVJ9cM/dev';
+        const completeData = {
+            prolificInfo: JSON.parse(sessionStorage.getItem('prolificInfo') || '{}'),
+            demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
+            finalQuestions: finalQuestions,
+            eyeTrackingData: {
+                abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
+                abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
+            },
+            studyType: "eye_tracking_v4_final"
+        };
+        
+        console.log("Datos listos para enviar:", completeData);
 
-            fetch(googleAppScriptURL, {
-              method: 'POST',
-              mode: 'no-cors', // Importante para evitar errores de CORS con Google
-              cache: 'no-cache',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(completeData)
-            });
-            
-            // 3. MUESTRA EL MENSAJE DE FINALIZACIÓN
-            // Oculta el formulario y muestra el mensaje de "Gracias".
-            document.getElementById('form-container').style.display = 'none';
-            document.getElementById('completion-message').style.display = 'block';
+        // 2. Enviar datos a Google
+        const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxCOAPtkBKdiZRz0A2vws95BK0jzD56nF-gxfqnVB7Ok7kazhSCkWU3-89gUvRc-zl8/exec'; // <-- USA LA URL QUE TERMINA EN /exec
+        fetch(googleAppScriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(completeData)
+        });
 
-            // 4. REDIRIGE A PROLIFIC
-            // La URL que te dio Prolific para confirmar la finalización.
-            const prolificCompletionURL = "https://app.prolific.com/submissions/complete?cc=CUNHJ72P"; 
-            
-            // Espera 3 segundos antes de redirigir para que el participante pueda leer el mensaje.
-            setTimeout(() => {
-                window.location.href = prolificCompletionURL;
-            }, 3000);
-        }
+        // 3. Mostrar mensaje de finalización
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('completion-message').style.display = 'block';
+
+        // 4. Redirigir a Prolific
+        const prolificCompletionURL = "https://app.prolific.com/submissions/complete?cc=CUNHJ72P";
+        setTimeout(() => {
+            window.location.href = prolificCompletionURL;
+        }, 3000);
+    }
