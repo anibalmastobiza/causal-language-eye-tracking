@@ -57,12 +57,14 @@
         function loadSummary() {}
 
         function handleFinalSubmit(event) {
-            event.preventDefault(); // Previene que el formulario se envíe de la forma tradicional.
+            event.preventDefault(); // Previene el envío normal del formulario
 
+            // Recopila las respuestas del formulario final
             const formData = new FormData(event.target);
             const finalQuestions = Object.fromEntries(formData.entries());
 
-            // 1. Unificar TODOS los datos en un solo objeto (SIN REDECLARAR)
+            // 1. CREA EL OBJETO DE DATOS COMPLETO (UNA SOLA VEZ)
+            // Recoge todos los datos guardados en las páginas anteriores y los une con las preguntas finales.
             const completeData = {
                 prolificInfo: JSON.parse(sessionStorage.getItem('prolificInfo') || '{}'),
                 demographics: JSON.parse(sessionStorage.getItem('demographicsData') || '{}'),
@@ -71,30 +73,34 @@
                     abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
                     abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
                 },
-                studyType: "eye_tracking_v1" // Identificador del estudio
+                studyType: "eye_tracking_v2" // He cambiado la versión para que sepas qué datos son de la nueva versión
             };
-
-            console.log("Datos completos a enviar:", JSON.stringify(completeData, null, 2));
             
-            // 2. Enviar los datos a Google Sheets
-            const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxCOAPtkBKdiZRz0A2vws95BK0jzD56nF-gxfqnVB7Ok7kazhSCkWU3-89gUvRc-zl8/exec';
+            // Muestra los datos en la consola para depuración (opcional)
+            console.log("Datos finales a enviar:", JSON.stringify(completeData, null, 2));
+            
+            // 2. ENVÍA LOS DATOS A TU GOOGLE SHEET
+            const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxG5Rt5BhKOJ0GPYo9-HpN7u_hnm14sVoEHUYVJ9cM/dev';
 
-            // Usamos fetch para enviar los datos de forma asíncrona
             fetch(googleAppScriptURL, {
               method: 'POST',
-              mode: 'no-cors', // Importante para evitar errores de CORS con Google Scripts
+              mode: 'no-cors', // Importante para evitar errores de CORS con Google
               cache: 'no-cache',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(completeData)
             });
             
-            // 3. Mostrar el mensaje de finalización al usuario
+            // 3. MUESTRA EL MENSAJE DE FINALIZACIÓN
+            // Oculta el formulario y muestra el mensaje de "Gracias".
             document.getElementById('form-container').style.display = 'none';
             document.getElementById('completion-message').style.display = 'block';
 
-            // 4. Redirigir a Prolific
+            // 4. REDIRIGE A PROLIFIC
+            // La URL que te dio Prolific para confirmar la finalización.
             const prolificCompletionURL = "https://app.prolific.com/submissions/complete?cc=CUNHJ72P"; 
+            
+            // Espera 3 segundos antes de redirigir para que el participante pueda leer el mensaje.
             setTimeout(() => {
                 window.location.href = prolificCompletionURL;
-            }, 3000); // 3 segundos de espera para que el usuario lea el mensaje.
+            }, 3000);
         }
