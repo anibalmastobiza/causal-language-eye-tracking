@@ -22,7 +22,7 @@
             <h1>Final Questions</h1>
             <p>Please answer these last few questions to complete the study.</p>
             <!-- FORMULARIO AÑADIDO -->
-            <form id="finalForm" onsubmit="handleFinalSubmit(event)">
+            <form id="finalForm">
                 <div class="question-block">
                     <label class="question-title">Overall, which type of abstract did you find more persuasive?</label>
                     <select name="general_persuasive" required>
@@ -53,17 +53,15 @@
         </div>
     </div>
     <script>
-        // --- INICIO DEL NUEVO SCRIPT ---
+    // --- INICIO DEL SCRIPT DEFINITIVO ---
 
+// Esta es la función que recopila y envía los datos.
 function handleFinalSubmit(event) {
-    // Detiene el comportamiento por defecto del formulario para que no recargue la página.
-    event.preventDefault();
-
-    console.log("✔️ PASO 1: Botón 'Complete Study' pulsado. Iniciando el proceso.");
+    // Previene que la página se recargue, que es el comportamiento por defecto de un formulario.
+    event.preventDefault(); 
+    console.log("✔️ Formulario enviado. Iniciando la recopilación de datos.");
 
     try {
-        // --- Recopilación de datos ---
-        console.log("✔️ PASO 2: Recopilando datos del formulario y de la sesión...");
         const finalQuestions = Object.fromEntries(new FormData(event.target).entries());
 
         const completeData = {
@@ -74,50 +72,49 @@ function handleFinalSubmit(event) {
                 abstract1: JSON.parse(sessionStorage.getItem('abstract1GazeData') || '[]'),
                 abstract2: JSON.parse(sessionStorage.getItem('abstract2GazeData') || '[]'),
             },
-            studyType: "eye_tracking_final_debug"
+            studyType: "eye_tracking_v5_fixed"
         };
-        console.log("✔️ PASO 3: Datos compilados con éxito.", completeData);
+        
+        console.log("✔️ Datos compilados. Enviando a Google Sheets...");
 
-        // --- Envío de datos ---
-        const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxCOAPtkBKdiZRz0A2vws95BK0jzD56nF-gxfqnVB7Ok7kazhSCkWU3-89gUvRc-zl8/exec'; // Tu URL de /exec
-        console.log("✔️ PASO 4: Preparando el envío de datos a Google Sheets.");
+        const googleAppScriptURL = 'https://script.google.com/macros/s/AKfycbxCOAPtkBKdiZRz0A2vws95BK0jzD56nF-gxfqnVB7Ok7kazhSCkWU3-89gUvRc-zl8/exec'; // Tu URL de producción
         
         fetch(googleAppScriptURL, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify(completeData)
         });
-        console.log("✔️ PASO 5: Petición de envío de datos realizada.");
 
-        // --- Interfaz de usuario ---
-        console.log("✔️ PASO 6: Ocultando formulario y mostrando mensaje de agradecimiento.");
+        console.log("✔️ Petición de envío realizada. Mostrando mensaje final.");
         document.getElementById('form-container').style.display = 'none';
         document.getElementById('completion-message').style.display = 'block';
 
-        // --- Redirección a Prolific ---
         const prolificCompletionURL = "https://app.prolific.com/submissions/complete?cc=CUNHJ72P";
-        console.log("✔️ PASO 7: Programando redirección a Prolific en 3 segundos.");
         
         setTimeout(() => {
-            console.log("✔️ PASO 8: Redirigiendo ahora a Prolific.");
+            console.log("✔️ Redirigiendo a Prolific.");
             window.location.href = prolificCompletionURL;
         }, 3000);
 
     } catch (error) {
-        // Si cualquier cosa en el bloque 'try' falla, se ejecutará este código.
-        console.error("❌ ¡ERROR CRÍTICO! El script ha fallado. El bucle se debe a este error:", error);
-        alert("Ha ocurrido un error. Por favor, revisa la consola de desarrollador (F12) para ver los detalles del error en rojo.");
+        console.error("❌ ERROR CRÍTICO DENTRO DE handleFinalSubmit:", error);
+        alert("Ha ocurrido un error inesperado. Revisa la consola (F12) para ver los detalles.");
     }
 }
 
-// Asegurarse de que el formulario está listo antes de añadir el listener.
+// Esta es la parte clave: esperamos a que toda la página se cargue.
 window.onload = function() {
+    console.log("✔️ Página cargada. Buscando el formulario...");
+    // Buscamos el formulario por su ID.
     const form = document.getElementById('finalForm');
+    
+    // Si lo encontramos, le asignamos la función handleFinalSubmit al evento 'submit'.
     if (form) {
         form.addEventListener('submit', handleFinalSubmit);
+        console.log("✔️ Función 'handleFinalSubmit' asignada correctamente al formulario.");
     } else {
-        console.error("❌ ERROR: No se ha encontrado el formulario con id 'finalForm'.");
+        console.error("❌ No se pudo encontrar el formulario con el id 'finalForm'.");
     }
 };
 
-// --- FIN DEL NUEVO SCRIPT ---
+// --- FIN DEL SCRIPT DEFINITIVO ---
